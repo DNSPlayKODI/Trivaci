@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivaci - Dashboard Executivo</title>
+  <title>Trivaci - Dashboard </title>
   <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1331,21 +1331,25 @@
         function validateAdForm(formData) {
             const errors = [];
             
-            if (!formData.get('ad-client')?.trim()) {
+            const client = formData.get('ad-client');
+            if (!client || !client.trim()) {
                 errors.push('Nome do cliente é obrigatório');
             }
             
-            if (!formData.get('ad-date')) {
+            const date = formData.get('ad-date');
+            if (!date) {
                 errors.push('Data da venda é obrigatória');
             }
             
-            const value = parseFloat(formData.get('ad-value'));
-            if (!value || value <= 0) {
+            const valueStr = formData.get('ad-value');
+            const value = parseFloat(valueStr);
+            if (!valueStr || isNaN(value) || value <= 0) {
                 errors.push('Valor deve ser maior que zero');
             }
             
-            const fee = parseFloat(formData.get('ad-fee'));
-            if (fee < 0 || fee > 100) {
+            const feeStr = formData.get('ad-fee') || '0';
+            const fee = parseFloat(feeStr);
+            if (isNaN(fee) || fee < 0 || fee > 100) {
                 errors.push('Taxa deve estar entre 0% e 100%');
             }
             
@@ -1427,43 +1431,53 @@
         document.getElementById('ad-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (currentData.length >= 999) {
-                showCustomModal('Limite Atingido', 'Você atingiu o limite máximo de 999 registros. Exclua alguns registros antes de adicionar novos.', 'error');
-                return;
-            }
-            
-            const formData = new FormData(e.target);
-            const validationErrors = validateAdForm(formData);
-            
-            if (validationErrors.length > 0) {
-                showCustomModal('Erro de Validação', validationErrors.join('<br>'), 'error');
-                return;
-            }
-            
-            const button = e.target.querySelector('.btn-primary');
-            const btnText = button.querySelector('.btn-text');
-            const loading = button.querySelector('.loading');
-            
-            // Enhanced loading state
-            btnText.style.display = 'none';
-            loading.style.display = 'inline';
-            button.disabled = true;
-            button.style.opacity = '0.7';
-            
             try {
+                if (currentData.length >= 999) {
+                    showCustomModal('Limite Atingido', 'Você atingiu o limite máximo de 999 registros. Exclua alguns registros antes de adicionar novos.', 'error');
+                    return;
+                }
+                
+                const formData = new FormData(e.target);
+                const validationErrors = validateAdForm(formData);
+                
+                if (validationErrors.length > 0) {
+                    showCustomModal('Erro de Validação', validationErrors.join('<br>'), 'error');
+                    return;
+                }
+                
+                const button = e.target.querySelector('.btn-primary');
+                const btnText = button.querySelector('.btn-text');
+                const loading = button.querySelector('.loading');
+                
+                if (!button || !btnText || !loading) {
+                    showToast('❌ Erro na interface do formulário', 'error');
+                    return;
+                }
+                
+                // Enhanced loading state
+                btnText.style.display = 'none';
+                loading.style.display = 'inline';
+                button.disabled = true;
+                button.style.opacity = '0.7';
+                
                 const value = parseFloat(formData.get('ad-value'));
                 const feePercentage = parseFloat(formData.get('ad-fee')) || 0;
                 const finalValue = value - (value * feePercentage / 100);
-                const date = new Date(formData.get('ad-date'));
+                const saleDate = formData.get('ad-date');
+                const date = new Date(saleDate);
+                
+                // Validate date
+                if (isNaN(date.getTime())) {
+                    throw new Error('Data inválida');
+                }
                 
                 // Check for duplicate entries
                 const clientName = formData.get('ad-client').trim();
-                const saleDate = formData.get('ad-date');
                 const isDuplicate = currentData.some(item => 
                     item.type === 'publicidade' && 
-                    item.client_name.toLowerCase() === clientName.toLowerCase() && 
+                    item.client_name && item.client_name.toLowerCase() === clientName.toLowerCase() && 
                     item.sale_date === saleDate &&
-                    Math.abs(item.value - value) < 0.01
+                    Math.abs((item.value || 0) - value) < 0.01
                 );
                 
                 if (isDuplicate) {
@@ -1472,10 +1486,6 @@
                         `Já existe uma publicidade para ${clientName} na data ${new Date(saleDate).toLocaleDateString('pt-BR')} com valor similar. Deseja continuar mesmo assim?`
                     );
                     if (!confirmDuplicate) {
-                        btnText.style.display = 'inline';
-                        loading.style.display = 'none';
-                        button.disabled = false;
-                        button.style.opacity = '1';
                         return;
                     }
                 }
@@ -1497,11 +1507,15 @@
                     created_at: new Date().toISOString()
                 };
                 
+                if (!window.dataSdk) {
+                    throw new Error('Sistema de dados não está disponível');
+                }
+                
                 const result = await window.dataSdk.create(adData);
                 
                 if (result.isOk) {
                     e.target.reset();
-                    updateFinalValue(); // Reset preview
+                    if (window.updateFinalValue) updateFinalValue(); // Reset preview
                     showToast('✅ Publicidade adicionada com sucesso!', 'success');
                     
                     // Add to recent clients for autocomplete
@@ -1510,24 +1524,33 @@
                     // Auto-switch to dashboard to see results
                     setTimeout(() => {
                         switchTab('dashboard');
-                        document.querySelector('[onclick="switchTab(\'dashboard\')"]').classList.add('active');
-                        document.querySelectorAll('.nav-tab').forEach(tab => {
-                            if (!tab.onclick || !tab.onclick.toString().includes('dashboard')) {
-                                tab.classList.remove('active');
-                            }
-                        });
+                        const dashboardTab = document.querySelector('[onclick*="dashboard"]');
+                        if (dashboardTab) {
+                            dashboardTab.classList.add('active');
+                            document.querySelectorAll('.nav-tab').forEach(tab => {
+                                if (tab !== dashboardTab) {
+                                    tab.classList.remove('active');
+                                }
+                            });
+                        }
                     }, 1500);
                 } else {
-                    throw new Error(result.error?.message || 'Erro desconhecido');
+                    throw new Error(result.error?.message || 'Erro ao salvar no banco de dados');
                 }
             } catch (error) {
                 console.error('Error saving ad:', error);
-                showToast('❌ Erro ao salvar publicidade. Tente novamente.', 'error');
+                showToast(`❌ Erro ao salvar publicidade: ${error.message}`, 'error');
             } finally {
-                btnText.style.display = 'inline';
-                loading.style.display = 'none';
-                button.disabled = false;
-                button.style.opacity = '1';
+                const button = e.target.querySelector('.btn-primary');
+                const btnText = button?.querySelector('.btn-text');
+                const loading = button?.querySelector('.loading');
+                
+                if (button && btnText && loading) {
+                    btnText.style.display = 'inline';
+                    loading.style.display = 'none';
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                }
             }
         });
 
@@ -1640,38 +1663,55 @@
         // Initialize SDK and app
         async function initializeApp() {
             try {
+                // Wait for SDK to be available
+                if (!window.dataSdk) {
+                    setTimeout(initializeApp, 100);
+                    return;
+                }
+                
                 const initResult = await window.dataSdk.init(dataHandler);
                 if (!initResult.isOk) {
-                    showToast('Erro ao inicializar sistema', 'error');
+                    console.error('Data SDK init failed:', initResult.error);
+                    showToast('❌ Erro ao inicializar sistema de dados', 'error');
                     return;
                 }
                 
                 if (window.elementSdk) {
-                    window.elementSdk.init({
-                        defaultConfig,
-                        onConfigChange: async (config) => {
-                            document.getElementById('agency-name').textContent = config.agency_name || defaultConfig.agency_name;
-                            document.getElementById('dashboard-title').textContent = config.dashboard_title || defaultConfig.dashboard_title;
-                        },
-                        mapToCapabilities: (config) => ({
-                            recolorables: [],
-                            borderables: [],
-                            fontEditable: undefined,
-                            fontSizeable: undefined
-                        }),
-                        mapToEditPanelValues: (config) => new Map([
-                            ["agency_name", config.agency_name || defaultConfig.agency_name],
-                            ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title]
-                        ])
-                    });
+                    try {
+                        window.elementSdk.init({
+                            defaultConfig,
+                            onConfigChange: async (config) => {
+                                const agencyElement = document.getElementById('agency-name');
+                                const titleElement = document.getElementById('dashboard-title');
+                                if (agencyElement) agencyElement.textContent = config.agency_name || defaultConfig.agency_name;
+                                if (titleElement) titleElement.textContent = config.dashboard_title || defaultConfig.dashboard_title;
+                            },
+                            mapToCapabilities: (config) => ({
+                                recolorables: [],
+                                borderables: [],
+                                fontEditable: undefined,
+                                fontSizeable: undefined
+                            }),
+                            mapToEditPanelValues: (config) => new Map([
+                                ["agency_name", config.agency_name || defaultConfig.agency_name],
+                                ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title]
+                            ])
+                        });
+                    } catch (elementError) {
+                        console.warn('Element SDK init failed:', elementError);
+                        // Continue without element SDK
+                    }
                 }
                 
                 initializeCharts();
                 setupAutocomplete();
                 setupFormCalculations();
                 loadMetas();
+                
+                showToast('✅ Sistema inicializado com sucesso!', 'success');
             } catch (error) {
-                showToast('Erro ao inicializar aplicação', 'error');
+                console.error('App initialization error:', error);
+                showToast('❌ Erro ao inicializar aplicação: ' + error.message, 'error');
             }
         }
 
@@ -2326,25 +2366,28 @@
                 '🧠 Continue adicionando dados para insights mais detalhados e personalizados.';
         }
         
-        // Add real-time value calculation for forms
-        function setupFormCalculations() {
+        // Global function for updating final value
+        function updateFinalValue() {
             const adValue = document.getElementById('ad-value');
             const adFee = document.getElementById('ad-fee');
             const finalValuePreview = document.getElementById('final-value-preview');
             
-            const profileValue = document.getElementById('profile-value');
-            const profileFollowers = document.getElementById('profile-followers');
-            const valuePerFollower = document.getElementById('value-per-follower');
-            const profileCategory = document.getElementById('profile-category');
-            
-            function updateFinalValue() {
+            if (adValue && adFee && finalValuePreview) {
                 const value = parseFloat(adValue.value) || 0;
                 const fee = parseFloat(adFee.value) || 0;
                 const finalValue = value - (value * fee / 100);
                 finalValuePreview.textContent = `R$ ${finalValue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             }
+        }
+        
+        // Global function for updating profile preview
+        function updateProfilePreview() {
+            const profileValue = document.getElementById('profile-value');
+            const profileFollowers = document.getElementById('profile-followers');
+            const valuePerFollower = document.getElementById('value-per-follower');
+            const profileCategory = document.getElementById('profile-category');
             
-            function updateProfilePreview() {
+            if (profileValue && profileFollowers && valuePerFollower && profileCategory) {
                 const value = parseFloat(profileValue.value) || 0;
                 const followers = parseInt(profileFollowers.value) || 0;
                 
@@ -2369,19 +2412,36 @@
                     profileCategory.style.color = '#6b7280';
                 }
             }
+        }
+        
+        // Add real-time value calculation for forms
+        function setupFormCalculations() {
+            const adValue = document.getElementById('ad-value');
+            const adFee = document.getElementById('ad-fee');
+            const profileValue = document.getElementById('profile-value');
+            const profileFollowers = document.getElementById('profile-followers');
             
-            adValue.addEventListener('input', updateFinalValue);
-            adFee.addEventListener('input', updateFinalValue);
+            if (adValue && adFee) {
+                adValue.addEventListener('input', updateFinalValue);
+                adFee.addEventListener('input', updateFinalValue);
+            }
             
-            profileValue.addEventListener('input', updateProfilePreview);
-            profileFollowers.addEventListener('input', updateProfilePreview);
+            if (profileValue && profileFollowers) {
+                profileValue.addEventListener('input', updateProfilePreview);
+                profileFollowers.addEventListener('input', updateProfilePreview);
+            }
             
             // Set default date to today
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('ad-date').value = today;
-            document.getElementById('profile-date').value = today;
-            document.getElementById('meta-month').value = new Date().toISOString().slice(0, 7);
-            document.getElementById('report-period').value = new Date().toISOString().slice(0, 7);
+            const adDate = document.getElementById('ad-date');
+            const profileDate = document.getElementById('profile-date');
+            const metaMonth = document.getElementById('meta-month');
+            const reportPeriod = document.getElementById('report-period');
+            
+            if (adDate) adDate.value = today;
+            if (profileDate) profileDate.value = today;
+            if (metaMonth) metaMonth.value = new Date().toISOString().slice(0, 7);
+            if (reportPeriod) reportPeriod.value = new Date().toISOString().slice(0, 7);
         }
         
         // Load saved metas
@@ -2899,5 +2959,5 @@
             initializeApp();
         });
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e3cabe85857b55',t:'MTc2MzA5NDgxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e3d3f7f1d87b55',t:'MTc2MzA5NTE5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
