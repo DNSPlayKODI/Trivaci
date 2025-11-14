@@ -1,838 +1,1307 @@
 <!doctype html>
-<html lang="pt-BR" class="h-full">
+<html lang="pt-BR">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivaci Digital Agency</title>
+  <title>Trivaci - Dashboard Executivo</title>
   <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
         body {
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            min-height: 100%;
+            color: #f8fafc;
+            position: relative;
+            overflow-x: hidden;
         }
-        .trivaci-gradient {
-            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 25%, #C084FC 50%, #E879F9 75%, #F0ABFC 100%);
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(34, 197, 94, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
-        .trivaci-gradient-dark {
-            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 25%, #A855F7 50%, #C084FC 75%, #D946EF 100%);
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(248, 250, 252, 0.08);
+            border-radius: 24px;
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(79, 172, 254, 0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .card-modern {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            box-shadow: 0 20px 25px -5px rgba(139, 92, 246, 0.1), 0 10px 10px -5px rgba(139, 92, 246, 0.04);
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
         }
-        .loading-spinner {
-            border: 3px solid rgba(139, 92, 246, 0.3);
-            border-top: 3px solid #8B5CF6;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .trivaci-logo {
-            font-weight: 800;
-            font-size: 1.75rem;
-            background: linear-gradient(45deg, #FFFFFF, #F0ABFC);
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #4facfe, #00f2fe, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(240, 171, 252, 0.5);
+            margin-bottom: 10px;
+            animation: gradientShift 4s ease-in-out infinite;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(79, 172, 254, 0.3);
+            position: relative;
         }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .logo::after {
+            content: '✨';
+            position: absolute;
+            right: -40px;
+            top: -10px;
+            font-size: 1.5rem;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 400;
+            background: linear-gradient(45deg, #ffffff, #e0e7ff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+            background: rgba(248, 250, 252, 0.05);
+            padding: 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(79, 172, 254, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 16px 24px;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 
+                0 8px 25px rgba(79, 172, 254, 0.4),
+                inset 0 1px 0 rgba(248, 250, 252, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
         .stat-card {
-            transition: all 0.3s ease;
+            background: rgba(248, 250, 252, 0.08);
+            padding: 30px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(79, 172, 254, 0.15);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(79, 172, 254, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
-        .nav-btn-active {
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff, #e0e7ff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            line-height: 1;
         }
-        .floating-elements::before {
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            background: linear-gradient(45deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 35px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
             content: '';
             position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #8b5cf6);
+            background-size: 200% 100%;
+            animation: gradientSlide 4s ease-in-out infinite;
         }
-        .floating-elements::after {
+
+        @keyframes gradientSlide {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: rgba(248, 250, 252, 0.08);
+            box-shadow: 
+                0 0 0 4px rgba(79, 172, 254, 0.2),
+                0 8px 25px rgba(79, 172, 254, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+        }
+
+        .btn {
+            padding: 18px 36px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
             content: '';
             position: absolute;
-            bottom: 10%;
-            right: 10%;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(192, 132, 252, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite reverse;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #ffffff;
+            box-shadow: 
+                0 8px 25px rgba(79, 172, 254, 0.4),
+                inset 0 1px 0 rgba(248, 250, 252, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 12px 35px rgba(79, 172, 254, 0.6),
+                inset 0 1px 0 rgba(248, 250, 252, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: #ffffff;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .data-table {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .table-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto;
+            gap: 15px;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+        }
+
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 25px rgba(34, 197, 94, 0.4),
+                inset 0 1px 0 rgba(248, 250, 252, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(248, 250, 252, 0.1);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast::before {
+            content: '✅';
+            font-size: 1.2rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 
+                0 8px 25px rgba(239, 68, 68, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .toast.error::before {
+            content: '❌';
+        }
+
+        .notification-center {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            max-width: 300px;
+            display: none;
+        }
+
+        .notification-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            border-left: 3px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
         }
     </style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
- <body class="h-full bg-gradient-to-br from-purple-50 via-white to-pink-50">
-  <div class="min-h-full"><!-- Header -->
-   <header class="trivaci-gradient shadow-2xl relative overflow-hidden">
-    <div class="floating-elements"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-     <div class="flex justify-between items-center py-8">
-      <div class="flex items-center space-x-4">
-       <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-        <svg class="w-8 h-8 text-white" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-        </svg>
-       </div>
-       <div>
-        <h1 id="agency-name" class="trivaci-logo">TRIVACI</h1>
-        <p class="text-white text-opacity-90 text-sm font-medium">Digital Agency</p>
-       </div>
+ <body>
+  <div class="container">
+   <header class="header">
+    <div class="logo" id="agency-name">
+     TRIVACI
+    </div>
+    <div class="subtitle" id="dashboard-title">
+     Dashboard Executivo
+    </div>
+   </header>
+   <nav class="nav-tabs"><button class="nav-tab active" onclick="switchTab('dashboard')"> <span style="margin-right: 8px;">📊</span>Dashboard </button> <button class="nav-tab" onclick="switchTab('publicidade')"> <span style="margin-right: 8px;">📢</span>Publicidade </button> <button class="nav-tab" onclick="switchTab('perfis')"> <span style="margin-right: 8px;">👤</span>Trader de Perfis </button> <button class="nav-tab" onclick="switchTab('analytics')"> <span style="margin-right: 8px;">📈</span>Analytics </button> <button class="nav-tab" onclick="switchTab('metas')"> <span style="margin-right: 8px;">🎯</span>Metas </button> <button class="nav-tab" onclick="switchTab('relatorios')"> <span style="margin-right: 8px;">📋</span>Relatórios </button>
+   </nav><!-- Dashboard Tab -->
+   <div id="dashboard" class="tab-content active">
+    <div class="form-container" style="margin-bottom: 20px;">
+     <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 0;">
+      <div class="form-group"><label for="period-filter">Período</label> <select id="period-filter" onchange="updateDashboard()"> <option value="all">Todos os períodos</option> <option value="30">Últimos 30 dias</option> <option value="90">Últimos 3 meses</option> <option value="365">Último ano</option> </select>
       </div>
-      <nav class="hidden md:block">
-       <div class="flex items-center space-x-2"><button onclick="showSection('dashboard')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 📊 Dashboard </button> <button onclick="showSection('analytics')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 📈 Analytics </button> <button onclick="showSection('crm')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 🎯 CRM </button> <button onclick="showSection('publicidade')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 📢 Publicidade </button> <button onclick="showSection('trading')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 💎 Trading </button> <button onclick="showSection('marketplace')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 🏪 Marketplace </button> <button onclick="showSection('financeiro')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> 💰 Financeiro </button> <button onclick="showSection('configuracoes')" class="nav-btn glass-effect text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300"> ⚙️ Config </button>
-       </div>
-      </nav>
+      <div class="form-group"><label for="service-filter">Serviço</label> <select id="service-filter" onchange="updateDashboard()"> <option value="all">Todos os serviços</option> <option value="publicidade">Publicidade</option> <option value="perfil">Perfis</option> </select>
+      </div>
+      <div class="form-group"><label for="year-filter">Ano</label> <select id="year-filter" onchange="updateDashboard()"> <option value="all">Todos os anos</option> </select>
+      </div>
      </div>
     </div>
-   </header><!-- Main Content -->
-   <main class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8"><!-- Analytics Section -->
-    <div id="analytics-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 flex justify-between items-center">
-       <div>
-        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Analytics Avançados</h2>
-        <p class="text-gray-600 text-lg">Análises detalhadas e previsões inteligentes</p>
+    <div class="stats-grid">
+     <div class="stat-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+       <div class="stat-value" id="total-revenue">
+        R$ 0
        </div>
-       <div class="flex gap-4"><button onclick="exportAnalytics()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 📊 Exportar Relatório </button> <button onclick="generateForecast()" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 🔮 Gerar Previsão </button>
-       </div>
-      </div><!-- Métricas Avançadas -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">ROI Médio</p>
-           <p id="avg-roi" class="text-3xl font-bold text-gray-900">0%</p>
-           <p id="roi-trend" class="text-sm text-green-600 mt-1">↗ +5.2% vs mês anterior</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">📈</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Taxa Conversão</p>
-           <p id="conversion-rate" class="text-3xl font-bold text-gray-900">0%</p>
-           <p id="conversion-trend" class="text-sm text-blue-600 mt-1">↗ +2.1% vs mês anterior</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">🎯</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Ticket Médio</p>
-           <p id="avg-ticket" class="text-3xl font-bold text-gray-900">R$ 0</p>
-           <p id="ticket-trend" class="text-sm text-purple-600 mt-1">↗ +12.5% vs mês anterior</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">💳</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Previsão Mensal</p>
-           <p id="monthly-forecast" class="text-3xl font-bold text-gray-900">R$ 0</p>
-           <p class="text-sm text-orange-600 mt-1">🔮 Baseado em IA</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">🚀</span>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div><!-- Gráficos Avançados -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3"></span> Tendência de Vendas (6 meses)</h3>
-        <canvas id="trendsChart" width="400" height="200"></canvas>
-       </div>
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"></span> Performance por Plataforma</h3>
-        <canvas id="platformChart" width="400" height="200"></canvas>
-       </div>
-      </div><!-- Análise de Concorrência -->
-      <div class="card-modern p-8 rounded-2xl mb-8">
-       <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mr-3"></span> Análise de Concorrência</h3>
-       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-gradient-to-br from-red-50 to-pink-50 p-6 rounded-xl border border-red-100">
-         <h4 class="font-bold text-red-800 mb-2">Preço Médio Mercado</h4>
-         <p class="text-2xl font-bold text-red-600" id="market-avg">R$ 2.850</p>
-         <p class="text-sm text-red-500 mt-1">Instagram 10k-50k seguidores</p>
-        </div>
-        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
-         <h4 class="font-bold text-green-800 mb-2">Nossa Média</h4>
-         <p class="text-2xl font-bold text-green-600" id="our-avg">R$ 3.200</p>
-         <p class="text-sm text-green-500 mt-1">+12.3% acima do mercado</p>
-        </div>
-        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border border-blue-100">
-         <h4 class="font-bold text-blue-800 mb-2">Oportunidade</h4>
-         <p class="text-2xl font-bold text-blue-600">+R$ 350</p>
-         <p class="text-sm text-blue-500 mt-1">Potencial por venda</p>
-        </div>
+       <div style="font-size: 2rem; opacity: 0.7;">
+        💰
        </div>
       </div>
-     </div>
-    </div><!-- CRM Section -->
-    <div id="crm-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 flex justify-between items-center">
-       <div>
-        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">CRM - Gestão de Clientes</h2>
-        <p class="text-gray-600 text-lg">Relacionamento e histórico completo dos clientes</p>
-       </div>
-       <div class="flex gap-4"><button onclick="showAddClientForm()" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 👤 Novo Cliente </button> <button onclick="sendBulkWhatsApp()" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 📱 WhatsApp em Massa </button>
-       </div>
-      </div><!-- Filtros CRM -->
-      <div class="card-modern p-6 rounded-2xl mb-8">
-       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Cliente</label> <input type="text" id="client-search" placeholder="Nome ou empresa..." class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Tag</label> <select id="client-tag-filter" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="">Todas as tags</option> <option value="vip">VIP</option> <option value="recorrente">Recorrente</option> <option value="novo">Novo</option> <option value="inativo">Inativo</option> </select>
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Período</label> <select id="client-period-filter" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="">Todo período</option> <option value="30">Últimos 30 dias</option> <option value="90">Últimos 90 dias</option> <option value="365">Último ano</option> </select>
-        </div>
-        <div class="flex items-end"><button onclick="filterClients()" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 🔍 Filtrar </button>
-        </div>
-       </div>
-      </div><!-- Lista de Clientes -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="clients-grid"><!-- Clientes serão inseridos aqui dinamicamente -->
-      </div><!-- Modal Adicionar Cliente -->
-      <div id="add-client-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-       <div class="card-modern p-8 rounded-2xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6">Novo Cliente</h3>
-        <form id="client-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Nome Completo</label> <input type="text" id="client-name" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-         </div>
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Empresa</label> <input type="text" id="client-company" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-         </div>
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">WhatsApp</label> <input type="tel" id="client-whatsapp" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-         </div>
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Email</label> <input type="email" id="client-email" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-         </div>
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Tag</label> <select id="client-tag" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="novo">Novo</option> <option value="recorrente">Recorrente</option> <option value="vip">VIP</option> <option value="inativo">Inativo</option> </select>
-         </div>
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Orçamento Médio</label> <input type="number" id="client-budget" step="0.01" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-         </div>
-         <div class="md:col-span-2"><label class="block text-sm font-semibold text-gray-700 mb-2">Observações</label> <textarea id="client-notes" rows="3" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"></textarea>
-         </div>
-         <div class="md:col-span-2 flex gap-4"><button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> Salvar Cliente </button> <button type="button" onclick="hideAddClientForm()" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300"> Cancelar </button>
-         </div>
-        </form>
-       </div>
+      <div class="stat-label">
+       Receita Total
+      </div>
+      <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;" id="revenue-growth">
+       +0% vs mês anterior
       </div>
      </div>
-    </div><!-- Dashboard Section -->
-    <div id="dashboard-section" class="section">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 text-center">
-       <h2 id="dashboard-title" class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Painel de Controle</h2>
-       <p class="text-gray-600 text-lg">Acompanhe o desempenho da Trivaci em tempo real</p>
-      </div><!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Receita Total</p>
-           <p id="total-revenue" class="text-3xl font-bold text-gray-900">R$ 0,00</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">💰</span>
-          </div>
-         </div>
-        </div>
+     <div class="stat-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+       <div class="stat-value" id="total-ads">
+        0
        </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Vendas Este Mês</p>
-           <p id="monthly-sales" class="text-3xl font-bold text-gray-900">0</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">📊</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Perfis Vendidos</p>
-           <p id="profiles-sold" class="text-3xl font-bold text-gray-900">0</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">👥</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Média por Venda</p>
-           <p id="average-sale" class="text-3xl font-bold text-gray-900">R$ 0,00</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">📈</span>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div><!-- Charts -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3"></span> Receita por Status</h3>
-        <canvas id="statusChart" width="400" height="200"></canvas>
-       </div>
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3"></span> Distribuição por Categoria</h3>
-        <canvas id="categoryChart" width="400" height="200"></canvas>
+       <div style="font-size: 2rem; opacity: 0.7;">
+        📢
        </div>
       </div>
-     </div>
-    </div><!-- Marketplace Section -->
-    <div id="marketplace-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 flex justify-between items-center">
-       <div>
-        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Marketplace de Perfis</h2>
-        <p class="text-gray-600 text-lg">Vitrine de perfis disponíveis e sistema de leilões</p>
-       </div>
-       <div class="flex gap-4"><button onclick="showAddMarketplaceItem()" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 🏪 Adicionar à Vitrine </button> <button onclick="startAuction()" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 🔨 Iniciar Leilão </button>
-       </div>
-      </div><!-- Filtros Marketplace -->
-      <div class="card-modern p-6 rounded-2xl mb-8">
-       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Categoria</label> <select id="marketplace-category-filter" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="">Todas</option> <option value="instagram">Instagram</option> <option value="tiktok">TikTok</option> <option value="youtube">YouTube</option> <option value="twitter">Twitter</option> </select>
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Seguidores Min</label> <input type="number" id="followers-min" placeholder="Ex: 10000" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Seguidores Max</label> <input type="number" id="followers-max" placeholder="Ex: 100000" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Preço Max</label> <input type="number" id="price-max" placeholder="Ex: 5000" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div class="flex items-end"><button onclick="filterMarketplace()" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 🔍 Filtrar </button>
-        </div>
-       </div>
-      </div><!-- Calculadora de Preços -->
-      <div class="card-modern p-8 rounded-2xl mb-8">
-       <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"></span> Calculadora de Preços Inteligente</h3>
-       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Seguidores</label> <input type="number" id="calc-followers" placeholder="Ex: 25000" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Engajamento (%)</label> <input type="number" id="calc-engagement" placeholder="Ex: 3.5" step="0.1" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Nicho</label> <select id="calc-niche" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="1.0">Geral</option> <option value="1.2">Lifestyle</option> <option value="1.5">Fitness</option> <option value="1.8">Negócios</option> <option value="2.0">Tecnologia</option> </select>
-        </div>
-        <div class="flex items-end"><button onclick="calculatePrice()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 💰 Calcular </button>
-        </div>
-       </div>
-       <div id="price-result" class="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 hidden">
-        <h4 class="font-bold text-green-800 mb-2">Preço Sugerido</h4>
-        <p class="text-2xl font-bold text-green-600" id="suggested-price">R$ 0</p>
-        <p class="text-sm text-green-500 mt-1">Baseado em algoritmo de mercado</p>
-       </div>
-      </div><!-- Grid de Perfis -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="marketplace-grid"><!-- Perfis serão inseridos aqui dinamicamente -->
+      <div class="stat-label">
+       Publicidades
+      </div>
+      <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;" id="ads-growth">
+       +0% vs mês anterior
       </div>
      </div>
-    </div><!-- Financeiro Section -->
-    <div id="financeiro-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 flex justify-between items-center">
-       <div>
-        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Controle Financeiro</h2>
-        <p class="text-gray-600 text-lg">Fluxo de caixa, metas e análise de lucratividade</p>
+     <div class="stat-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+       <div class="stat-value" id="total-profiles">
+        0
        </div>
-       <div class="flex gap-4"><button onclick="showAddGoalForm()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 🎯 Nova Meta </button> <button onclick="exportFinancialReport()" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"> 📊 Relatório </button>
-       </div>
-      </div><!-- Resumo Financeiro -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Receita Bruta</p>
-           <p id="gross-revenue" class="text-3xl font-bold text-gray-900">R$ 0</p>
-           <p id="gross-trend" class="text-sm text-green-600 mt-1">↗ +15.2% vs mês anterior</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">💰</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Comissões Pagas</p>
-           <p id="total-commissions" class="text-3xl font-bold text-gray-900">R$ 0</p>
-           <p class="text-sm text-orange-600 mt-1">📊 Total em comissões</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">🤝</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Receita Líquida</p>
-           <p id="net-revenue" class="text-3xl font-bold text-gray-900">R$ 0</p>
-           <p class="text-sm text-blue-600 mt-1">💎 Após comissões</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">💎</span>
-          </div>
-         </div>
-        </div>
-       </div>
-       <div class="stat-card card-modern overflow-hidden rounded-2xl">
-        <div class="p-8">
-         <div class="flex items-center justify-between">
-          <div>
-           <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Meta Mensal</p>
-           <p id="monthly-goal" class="text-3xl font-bold text-gray-900">R$ 50.000</p>
-           <p id="goal-progress" class="text-sm text-purple-600 mt-1">🎯 65% atingido</p>
-          </div>
-          <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center"><span class="text-2xl">🎯</span>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div><!-- Gráfico de Fluxo de Caixa -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"></span> Fluxo de Caixa (6 meses)</h3>
-        <canvas id="cashFlowChart" width="400" height="200"></canvas>
-       </div>
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3"></span> Lucratividade por Categoria</h3>
-        <canvas id="profitabilityChart" width="400" height="200"></canvas>
-       </div>
-      </div><!-- Metas de Vendas -->
-      <div class="card-modern p-8 rounded-2xl mb-8">
-       <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3"></span> Metas de Vendas</h3>
-       <div class="space-y-6" id="goals-list"><!-- Metas serão inseridas aqui dinamicamente -->
+       <div style="font-size: 2rem; opacity: 0.7;">
+        👤
        </div>
       </div>
-     </div>
-    </div><!-- Configurações Section -->
-    <div id="configuracoes-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10">
-       <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Configurações</h2>
-       <p class="text-gray-600 text-lg">Personalize sua experiência na Trivaci</p>
-      </div><!-- Configurações Gerais -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3"></span> Configurações Gerais</h3>
-        <div class="space-y-6">
-         <div><label class="flex items-center justify-between"> <span class="text-sm font-semibold text-gray-700">Modo Escuro</span> <input type="checkbox" id="dark-mode" class="toggle-switch"> </label>
-         </div>
-         <div><label class="flex items-center justify-between"> <span class="text-sm font-semibold text-gray-700">Notificações Push</span> <input type="checkbox" id="notifications" class="toggle-switch" checked> </label>
-         </div>
-         <div><label class="flex items-center justify-between"> <span class="text-sm font-semibold text-gray-700">Backup Automático</span> <input type="checkbox" id="auto-backup" class="toggle-switch" checked> </label>
-         </div>
-         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Idioma</label> <select class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="pt-BR">Português (Brasil)</option> <option value="en-US">English (US)</option> <option value="es-ES">Español</option> </select>
-         </div>
-        </div>
-       </div>
-       <div class="card-modern p-8 rounded-2xl">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"></span> Atalhos de Teclado</h3>
-        <div class="space-y-4">
-         <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Nova venda</span> <kbd class="px-3 py-1 bg-gray-100 rounded-lg text-sm font-mono">Ctrl + N</kbd>
-         </div>
-         <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Busca global</span> <kbd class="px-3 py-1 bg-gray-100 rounded-lg text-sm font-mono">Ctrl + K</kbd>
-         </div>
-         <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Dashboard</span> <kbd class="px-3 py-1 bg-gray-100 rounded-lg text-sm font-mono">Ctrl + 1</kbd>
-         </div>
-         <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Analytics</span> <kbd class="px-3 py-1 bg-gray-100 rounded-lg text-sm font-mono">Ctrl + 2</kbd>
-         </div>
-         <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Exportar dados</span> <kbd class="px-3 py-1 bg-gray-100 rounded-lg text-sm font-mono">Ctrl + E</kbd>
-         </div>
-        </div>
-       </div>
-      </div><!-- Ações Rápidas -->
-      <div class="card-modern p-8 rounded-2xl mt-8">
-       <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-3 h-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mr-3"></span> Ações Rápidas</h3>
-       <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><button onclick="exportAllData()" class="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100 hover:shadow-lg transition-all duration-300">
-         <div class="text-3xl mb-3">
-          📊
-         </div><h4 class="font-bold text-blue-800 mb-2">Exportar Todos os Dados</h4><p class="text-sm text-blue-600">Baixar CSV completo</p></button> <button onclick="generateBackup()" class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100 hover:shadow-lg transition-all duration-300">
-         <div class="text-3xl mb-3">
-          💾
-         </div><h4 class="font-bold text-green-800 mb-2">Backup Manual</h4><p class="text-sm text-green-600">Salvar backup agora</p></button> <button onclick="resetAllData()" class="p-6 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl border border-red-100 hover:shadow-lg transition-all duration-300">
-         <div class="text-3xl mb-3">
-          🗑️
-         </div><h4 class="font-bold text-red-800 mb-2">Limpar Dados</h4><p class="text-sm text-red-600">Remover todos os registros</p></button>
-       </div>
+      <div class="stat-label">
+       Perfis Vendidos
+      </div>
+      <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;" id="profiles-growth">
+       +0% vs mês anterior
       </div>
      </div>
-    </div><!-- Publicidade Section -->
-    <div id="publicidade-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 flex justify-between items-center">
-       <div>
-        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Gestão de Publicidade</h2>
-        <p class="text-gray-600 text-lg">Controle todas as campanhas publicitárias da Trivaci</p>
-       </div><button onclick="showAddPublicidadeForm()" class="trivaci-gradient-dark text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"> ✨ Nova Campanha </button>
-      </div><!-- Add Form -->
-      <div id="add-publicidade-form" class="hidden card-modern p-8 rounded-2xl mb-8">
-       <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-3"> <span class="text-white text-sm">📢</span> </span> Nova Campanha Publicitária</h3>
-       <form id="publicidade-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div><label for="pub-client" class="block text-sm font-semibold text-gray-700 mb-2">Cliente</label> <input type="text" id="pub-client" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="pub-profile" class="block text-sm font-semibold text-gray-700 mb-2">Perfil/Página</label> <input type="text" id="pub-profile" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="pub-date" class="block text-sm font-semibold text-gray-700 mb-2">Data da Venda</label> <input type="date" id="pub-date" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="pub-value" class="block text-sm font-semibold text-gray-700 mb-2">Valor (R$)</label> <input type="number" id="pub-value" step="0.01" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="pub-fee" class="block text-sm font-semibold text-gray-700 mb-2">Taxa (%)</label> <input type="number" id="pub-fee" step="0.01" min="0" max="100" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="pub-status" class="block text-sm font-semibold text-gray-700 mb-2">Status</label> <select id="pub-status" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="ativo">Ativo</option> <option value="concluido">Concluído</option> <option value="cancelado">Cancelado</option> </select>
-        </div>
-        <div class="md:col-span-2 flex gap-4"><button type="submit" id="pub-submit-btn" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center gap-3"> <span id="pub-submit-text">Salvar Campanha</span>
-          <div id="pub-loading" class="loading-spinner hidden"></div></button> <button type="button" onclick="hideAddPublicidadeForm()" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300"> Cancelar </button>
-        </div>
-       </form>
-      </div><!-- Publicidade List -->
-      <div class="card-modern shadow-xl rounded-2xl overflow-hidden">
-       <div class="px-8 py-6 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-100">
-        <h3 class="text-xl font-bold text-gray-900">Campanhas Publicitárias</h3>
+     <div class="stat-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+       <div class="stat-value" id="avg-ticket">
+        R$ 0
        </div>
-       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-purple-100">
-         <thead class="bg-gradient-to-r from-purple-50 to-pink-50">
-          <tr>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cliente</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Perfil</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Valor</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Taxa</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Valor Final</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Ações</th>
-          </tr>
-         </thead>
-         <tbody id="publicidade-list" class="bg-white divide-y divide-purple-50">
-          <tr>
-           <td colspan="8" class="px-6 py-8 text-center text-gray-500">Nenhuma campanha cadastrada ainda</td>
-          </tr>
-         </tbody>
-        </table>
+       <div style="font-size: 2rem; opacity: 0.7;">
+        🎫
        </div>
       </div>
+      <div class="stat-label">
+       Ticket Médio
+      </div>
+      <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;" id="ticket-growth">
+       +0% vs mês anterior
+      </div>
      </div>
-    </div><!-- Trading Section -->
-    <div id="trading-section" class="section hidden">
-     <div class="px-4 py-6 sm:px-0">
-      <div class="mb-10 flex justify-between items-center">
-       <div>
-        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">Trading de Perfis</h2>
-        <p class="text-gray-600 text-lg">Gerencie a compra e venda de perfis sociais</p>
-       </div><button onclick="showAddTradingForm()" class="trivaci-gradient-dark text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"> 💎 Nova Venda </button>
-      </div><!-- Add Form -->
-      <div id="add-trading-form" class="hidden card-modern p-8 rounded-2xl mb-8">
-       <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center"><span class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-3"> <span class="text-white text-sm">💎</span> </span> Nova Venda de Perfil</h3>
-       <form id="trading-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div><label for="trade-username" class="block text-sm font-semibold text-gray-700 mb-2">Nome de Usuário</label> <input type="text" id="trade-username" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="trade-followers" class="block text-sm font-semibold text-gray-700 mb-2">Seguidores</label> <input type="number" id="trade-followers" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="trade-date" class="block text-sm font-semibold text-gray-700 mb-2">Data da Venda</label> <input type="date" id="trade-date" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="trade-value" class="block text-sm font-semibold text-gray-700 mb-2">Valor de Venda (R$)</label> <input type="number" id="trade-value" step="0.01" required class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-        </div>
-        <div><label for="trade-category" class="block text-sm font-semibold text-gray-700 mb-2">Categoria</label> <select id="trade-category" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="instagram">Instagram</option> <option value="tiktok">TikTok</option> <option value="youtube">YouTube</option> <option value="twitter">Twitter</option> <option value="facebook">Facebook</option> </select>
-        </div>
-        <div><label for="trade-status" class="block text-sm font-semibold text-gray-700 mb-2">Status</label> <select id="trade-status" class="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"> <option value="vendido">Vendido</option> <option value="negociando">Negociando</option> <option value="disponivel">Disponível</option> </select>
-        </div>
-        <div class="md:col-span-2 flex gap-4"><button type="submit" id="trade-submit-btn" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center gap-3"> <span id="trade-submit-text">Salvar Venda</span>
-          <div id="trade-loading" class="loading-spinner hidden"></div></button> <button type="button" onclick="hideAddTradingForm()" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300"> Cancelar </button>
-        </div>
-       </form>
-      </div><!-- Trading List -->
-      <div class="card-modern shadow-xl rounded-2xl overflow-hidden">
-       <div class="px-8 py-6 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-100">
-        <h3 class="text-xl font-bold text-gray-900">Perfis Negociados</h3>
+     <div class="stat-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+       <div class="stat-value" id="total-fees">
+        R$ 0
        </div>
-       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-purple-100">
-         <thead class="bg-gradient-to-r from-purple-50 to-pink-50">
-          <tr>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Usuário</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Seguidores</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Categoria</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Valor</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-           <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Ações</th>
-          </tr>
-         </thead>
-         <tbody id="trading-list" class="bg-white divide-y divide-purple-50">
-          <tr>
-           <td colspan="7" class="px-6 py-8 text-center text-gray-500">Nenhum perfil cadastrado ainda</td>
-          </tr>
-         </tbody>
-        </table>
+       <div style="font-size: 2rem; opacity: 0.7;">
+        💸
+       </div>
+      </div>
+      <div class="stat-label">
+       Total em Taxas
+      </div>
+      <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;" id="fees-percentage">
+       0% da receita
+      </div>
+     </div>
+     <div class="stat-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+       <div class="stat-value" id="avg-followers">
+        0
+       </div>
+       <div style="font-size: 2rem; opacity: 0.7;">
+        👥
+       </div>
+      </div>
+      <div class="stat-label">
+       Média de Seguidores
+      </div>
+      <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;" id="follower-value">
+       R$ 0/seguidor
+      </div>
+     </div>
+    </div>
+    <div class="charts-grid">
+     <div class="chart-container">
+      <div class="chart-title">
+       Receita por Mês
+      </div>
+      <canvas id="revenueChart" width="400" height="300"></canvas>
+     </div>
+     <div class="chart-container">
+      <div class="chart-title">
+       Distribuição de Serviços
+      </div>
+      <canvas id="servicesChart" width="400" height="300"></canvas>
+     </div>
+     <div class="chart-container">
+      <div class="chart-title">
+       ROI por Serviço
+      </div>
+      <canvas id="roiChart" width="400" height="300"></canvas>
+     </div>
+     <div class="chart-container">
+      <div class="chart-title">
+       Top 5 Clientes
+      </div>
+      <canvas id="clientsChart" width="400" height="300"></canvas>
+     </div>
+    </div>
+   </div><!-- Analytics Tab -->
+   <div id="analytics" class="tab-content">
+    <div class="stats-grid">
+     <div class="stat-card">
+      <div class="stat-value" id="conversion-rate">
+       0%
+      </div>
+      <div class="stat-label">
+       Taxa de Conversão
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-value" id="best-month">
+       -
+      </div>
+      <div class="stat-label">
+       Melhor Mês
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-value" id="growth-trend">
+       0%
+      </div>
+      <div class="stat-label">
+       Crescimento Mensal
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-value" id="avg-deal-size">
+       R$ 0
+      </div>
+      <div class="stat-label">
+       Valor Médio por Deal
+      </div>
+     </div>
+    </div>
+    <div class="charts-grid">
+     <div class="chart-container">
+      <div class="chart-title">
+       Tendência de Crescimento
+      </div>
+      <canvas id="trendChart" width="400" height="300"></canvas>
+     </div>
+     <div class="chart-container">
+      <div class="chart-title">
+       Performance por Trimestre
+      </div>
+      <canvas id="quarterChart" width="400" height="300"></canvas>
+     </div>
+     <div class="chart-container">
+      <div class="chart-title">
+       Análise de Seguidores vs Valor
+      </div>
+      <canvas id="scatterChart" width="400" height="300"></canvas>
+     </div>
+     <div class="chart-container">
+      <div class="chart-title">
+       Previsão de Receita
+      </div>
+      <canvas id="forecastChart" width="400" height="300"></canvas>
+     </div>
+    </div>
+   </div><!-- Metas Tab -->
+   <div id="metas" class="tab-content">
+    <div class="form-container">
+     <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 1.5rem;">Definir Metas Mensais</h2>
+     <div class="form-grid">
+      <div class="form-group"><label for="meta-revenue">Meta de Receita (R$)</label> <input type="number" id="meta-revenue" step="0.01" placeholder="50000.00">
+      </div>
+      <div class="form-group"><label for="meta-ads">Meta de Publicidades</label> <input type="number" id="meta-ads" placeholder="20">
+      </div>
+      <div class="form-group"><label for="meta-profiles">Meta de Perfis</label> <input type="number" id="meta-profiles" placeholder="10">
+      </div>
+      <div class="form-group"><label for="meta-month">Mês/Ano</label> <input type="month" id="meta-month">
+      </div>
+     </div><button type="button" class="btn btn-primary" onclick="saveMeta()">Salvar Meta</button>
+    </div>
+    <div class="stats-grid">
+     <div class="stat-card">
+      <div class="stat-value" id="meta-progress-revenue">
+       0%
+      </div>
+      <div class="stat-label">
+       Progresso Receita
+      </div>
+      <div class="progress-bar" style="width: 100%; height: 8px; background: rgba(248,250,252,0.2); border-radius: 4px; margin-top: 10px;">
+       <div id="progress-revenue" style="height: 100%; background: linear-gradient(45deg, #22c55e, #16a34a); border-radius: 4px; width: 0%; transition: width 0.3s ease;"></div>
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-value" id="meta-progress-ads">
+       0%
+      </div>
+      <div class="stat-label">
+       Progresso Publicidades
+      </div>
+      <div class="progress-bar" style="width: 100%; height: 8px; background: rgba(248,250,252,0.2); border-radius: 4px; margin-top: 10px;">
+       <div id="progress-ads" style="height: 100%; background: linear-gradient(45deg, #4facfe, #00f2fe); border-radius: 4px; width: 0%; transition: width 0.3s ease;"></div>
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-value" id="meta-progress-profiles">
+       0%
+      </div>
+      <div class="stat-label">
+       Progresso Perfis
+      </div>
+      <div class="progress-bar" style="width: 100%; height: 8px; background: rgba(248,250,252,0.2); border-radius: 4px; margin-top: 10px;">
+       <div id="progress-profiles" style="height: 100%; background: linear-gradient(45deg, #8b5cf6, #a855f7); border-radius: 4px; width: 0%; transition: width 0.3s ease;"></div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Relatórios Tab -->
+   <div id="relatorios" class="tab-content">
+    <div class="form-container">
+     <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 1.5rem;">Gerar Relatórios</h2>
+     <div class="form-grid">
+      <div class="form-group"><label for="report-type">Tipo de Relatório</label> <select id="report-type"> <option value="monthly">Relatório Mensal</option> <option value="quarterly">Relatório Trimestral</option> <option value="yearly">Relatório Anual</option> <option value="client">Relatório por Cliente</option> </select>
+      </div>
+      <div class="form-group"><label for="report-period">Período</label> <input type="month" id="report-period">
+      </div>
+     </div>
+     <div style="display: flex; gap: 15px; flex-wrap: wrap;"><button type="button" class="btn btn-primary" onclick="generateReport()">Gerar Relatório</button> <button type="button" class="btn btn-primary" onclick="exportData('pdf')" style="background: linear-gradient(45deg, #ef4444, #dc2626);">Exportar PDF</button> <button type="button" class="btn btn-primary" onclick="exportData('excel')" style="background: linear-gradient(45deg, #10b981, #059669);">Exportar Excel</button>
+     </div>
+    </div>
+    <div id="report-content" class="data-table" style="display: none;">
+     <div class="table-header">
+      Relatório Gerado
+     </div>
+     <div class="table-content">
+      <div id="report-data"></div>
+     </div>
+    </div>
+    <div class="form-container">
+     <h3 style="margin-top: 0; margin-bottom: 20px;">Insights Automáticos</h3>
+     <div id="insights-container">
+      <div class="stat-card" style="margin-bottom: 15px;">
+       <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 10px;">
+        💡 Insights da Semana
+       </div>
+       <div id="weekly-insights" style="font-size: 0.9rem; line-height: 1.5;">
+        Carregando insights...
        </div>
       </div>
      </div>
     </div>
-   </main>
+   </div><!-- Publicidade Tab -->
+   <div id="publicidade" class="tab-content">
+    <div class="form-container">
+     <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 1.5rem;">Adicionar Publicidade</h2>
+     <form id="ad-form">
+      <div class="form-grid">
+       <div class="form-group"><label for="ad-client">Cliente</label> <input type="text" id="ad-client" placeholder="Nome do cliente" required> <datalist id="clients-list"></datalist>
+       </div>
+       <div class="form-group"><label for="ad-date">Data da Venda</label> <input type="date" id="ad-date" required>
+       </div>
+       <div class="form-group"><label for="ad-value">Valor (R$)</label> <input type="number" id="ad-value" step="0.01" placeholder="0.00" required min="0"> <small style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Valor bruto antes das taxas</small>
+       </div>
+       <div class="form-group"><label for="ad-fee">Taxa (%)</label> <input type="number" id="ad-fee" step="0.01" placeholder="0.00" min="0" max="100"> <small style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Taxa de comissão ou desconto</small>
+       </div>
+       <div class="form-group"><label for="ad-category">Categoria</label> <select id="ad-category"> <option value="social-media">Social Media</option> <option value="google-ads">Google Ads</option> <option value="facebook-ads">Facebook Ads</option> <option value="instagram-ads">Instagram Ads</option> <option value="tiktok-ads">TikTok Ads</option> <option value="outros">Outros</option> </select>
+       </div>
+       <div class="form-group"><label for="ad-status">Status</label> <select id="ad-status"> <option value="ativo">Ativo</option> <option value="pausado">Pausado</option> <option value="finalizado">Finalizado</option> </select>
+       </div>
+      </div>
+      <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 20px 0;">
+       <div style="display: flex; justify-content: space-between; align-items: center;"><span>Valor Final:</span> <span id="final-value-preview" style="font-size: 1.2rem; font-weight: 700;">R$ 0,00</span>
+       </div>
+      </div><button type="submit" class="btn btn-primary"> <span class="btn-text">Adicionar Publicidade</span> <span class="loading" style="display: none;">Salvando...</span> </button>
+     </form>
+    </div>
+    <div class="data-table">
+     <div class="table-header">
+      Publicidades Cadastradas
+     </div>
+     <div class="table-content">
+      <div class="table-row" style="font-weight: 600; background: rgba(255, 255, 255, 0.1);">
+       <div>
+        Cliente
+       </div>
+       <div>
+        Data
+       </div>
+       <div>
+        Valor
+       </div>
+       <div>
+        Taxa
+       </div>
+       <div>
+        Valor Final
+       </div>
+       <div>
+        Mês/Ano
+       </div>
+       <div>
+        Ações
+       </div>
+      </div>
+      <div id="ads-list"></div>
+     </div>
+    </div>
+   </div><!-- Perfis Tab -->
+   <div id="perfis" class="tab-content">
+    <div class="form-container">
+     <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 1.5rem;">Adicionar Venda de Perfil</h2>
+     <form id="profile-form">
+      <div class="form-grid">
+       <div class="form-group"><label for="profile-username">Nome de Usuário</label> <input type="text" id="profile-username" placeholder="@username" required>
+       </div>
+       <div class="form-group"><label for="profile-date">Data da Venda</label> <input type="date" id="profile-date" required>
+       </div>
+       <div class="form-group"><label for="profile-value">Valor de Venda (R$)</label> <input type="number" id="profile-value" step="0.01" placeholder="0.00" required>
+       </div>
+       <div class="form-group"><label for="profile-followers">Seguidores</label> <input type="number" id="profile-followers" placeholder="0" required>
+       </div>
+      </div><button type="submit" class="btn btn-primary"> <span class="btn-text">Adicionar Venda</span> <span class="loading" style="display: none;">Salvando...</span> </button>
+     </form>
+    </div>
+    <div class="data-table">
+     <div class="table-header">
+      Perfis Vendidos
+     </div>
+     <div class="table-content">
+      <div class="table-row" style="font-weight: 600; background: rgba(255, 255, 255, 0.1);">
+       <div>
+        Username
+       </div>
+       <div>
+        Data
+       </div>
+       <div>
+        Valor
+       </div>
+       <div>
+        Seguidores
+       </div>
+       <div>
+        Valor/Seguidor
+       </div>
+       <div>
+        Mês/Ano
+       </div>
+       <div>
+        Ações
+       </div>
+      </div>
+      <div id="profiles-list"></div>
+     </div>
+    </div>
+   </div>
   </div>
+  <div id="toast" class="toast"></div>
   <script>
-        // Global variables
-        let allData = [];
-        let statusChart = null;
-        let categoryChart = null;
-        let trendsChart = null;
-        let platformChart = null;
-        let cashFlowChart = null;
-        let profitabilityChart = null;
-        let currentRecordCount = 0;
-        let clientsData = [];
-        let goalsData = [];
-        let marketplaceData = [];
-
-        // Default configuration
+        // Configuration
         const defaultConfig = {
             agency_name: "TRIVACI",
-            dashboard_title: "Painel de Controle",
-            currency_symbol: "R$",
-            primary_color: "#8B5CF6",
-            secondary_color: "#A855F7",
-            background_color: "#FEFCFF",
-            text_color: "#1F2937",
-            accent_color: "#E879F9"
+            dashboard_title: "Dashboard Executivo"
         };
+
+        // Global variables
+        let currentData = [];
+        let revenueChart = null;
+        let servicesChart = null;
+        let roiChart = null;
+        let clientsChart = null;
+        let trendChart = null;
+        let quarterChart = null;
+        let scatterChart = null;
+        let forecastChart = null;
+        let currentMetas = {};
 
         // Data handler for SDK
         const dataHandler = {
             onDataChanged(data) {
-                allData = data;
-                currentRecordCount = data.length;
+                currentData = data;
                 updateDashboard();
-                updatePublicidadeList();
-                updateTradingList();
+                updateAdsList();
+                updateProfilesList();
             }
         };
 
-        // Initialize SDKs
+        // Initialize SDK and app
         async function initializeApp() {
             try {
-                if (window.dataSdk) {
-                    const result = await window.dataSdk.init(enhancedDataHandler);
-                    if (!result.isOk) {
-                        console.error("Failed to initialize data SDK");
-                    }
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (!initResult.isOk) {
+                    showToast('Erro ao inicializar sistema', 'error');
+                    return;
                 }
-
+                
                 if (window.elementSdk) {
-                    await window.elementSdk.init({
+                    window.elementSdk.init({
                         defaultConfig,
                         onConfigChange: async (config) => {
                             document.getElementById('agency-name').textContent = config.agency_name || defaultConfig.agency_name;
                             document.getElementById('dashboard-title').textContent = config.dashboard_title || defaultConfig.dashboard_title;
-                            
-                            // Apply colors
-                            const primaryColor = config.primary_color || defaultConfig.primary_color;
-                            const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
-                            const backgroundColor = config.background_color || defaultConfig.background_color;
-                            const textColor = config.text_color || defaultConfig.text_color;
-                            const accentColor = config.accent_color || defaultConfig.accent_color;
-                            
-                            document.body.style.backgroundColor = backgroundColor;
-                            document.body.style.color = textColor;
-                            
-                            // Update gradient backgrounds
-                            const trivaciBg = document.querySelectorAll('.trivaci-gradient');
-                            trivaciBg.forEach(el => {
-                                el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 25%, ${accentColor} 50%, #E879F9 75%, #F0ABFC 100%)`;
-                            });
-                            
-                            const trivaciDarkBg = document.querySelectorAll('.trivaci-gradient-dark');
-                            trivaciDarkBg.forEach(el => {
-                                el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 50%, ${accentColor} 100%)`;
-                            });
                         },
                         mapToCapabilities: (config) => ({
-                            recolorables: [
-                                {
-                                    get: () => config.primary_color || defaultConfig.primary_color,
-                                    set: (value) => {
-                                        if (window.elementSdk) {
-                                            window.elementSdk.setConfig({ primary_color: value });
-                                        }
-                                    }
-                                },
-                                {
-                                    get: () => config.secondary_color || defaultConfig.secondary_color,
-                                    set: (value) => {
-                                        if (window.elementSdk) {
-                                            window.elementSdk.setConfig({ secondary_color: value });
-                                        }
-                                    }
-                                },
-                                {
-                                    get: () => config.background_color || defaultConfig.background_color,
-                                    set: (value) => {
-                                        if (window.elementSdk) {
-                                            window.elementSdk.setConfig({ background_color: value });
-                                        }
-                                    }
-                                },
-                                {
-                                    get: () => config.text_color || defaultConfig.text_color,
-                                    set: (value) => {
-                                        if (window.elementSdk) {
-                                            window.elementSdk.setConfig({ text_color: value });
-                                        }
-                                    }
-                                },
-                                {
-                                    get: () => config.accent_color || defaultConfig.accent_color,
-                                    set: (value) => {
-                                        if (window.elementSdk) {
-                                            window.elementSdk.setConfig({ accent_color: value });
-                                        }
-                                    }
-                                }
-                            ],
+                            recolorables: [],
                             borderables: [],
                             fontEditable: undefined,
                             fontSizeable: undefined
                         }),
                         mapToEditPanelValues: (config) => new Map([
                             ["agency_name", config.agency_name || defaultConfig.agency_name],
-                            ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title],
-                            ["currency_symbol", config.currency_symbol || defaultConfig.currency_symbol]
+                            ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title]
                         ])
                     });
                 }
-
-                initializeCharts();
-                initializeAdvancedCharts();
-                initializeFinancialCharts();
-                updateClientsGrid();
                 
-                // Set default active section
-                showSection('dashboard');
+                initializeCharts();
             } catch (error) {
-                console.error("Error initializing app:", error);
+                showToast('Erro ao inicializar aplicação', 'error');
             }
         }
 
-        // Navigation
-        function showSection(sectionName) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionName + '-section').classList.remove('hidden');
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
             
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('nav-btn-active');
-            });
-            
-            // Find and activate the clicked button
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(btn => {
-                if (btn.onclick && btn.onclick.toString().includes(sectionName)) {
-                    btn.classList.add('nav-btn-active');
-                }
-            });
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
         }
 
-        // Dashboard functions
+        // Form handlers
+        document.getElementById('ad-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (currentData.length >= 999) {
+                showToast('Limite máximo de 999 registros atingido', 'error');
+                return;
+            }
+            
+            const button = e.target.querySelector('.btn-primary');
+            const btnText = button.querySelector('.btn-text');
+            const loading = button.querySelector('.loading');
+            
+            btnText.style.display = 'none';
+            loading.style.display = 'inline';
+            button.disabled = true;
+            
+            const formData = new FormData(e.target);
+            const value = parseFloat(formData.get('ad-value')) || 0;
+            const feePercentage = parseFloat(formData.get('ad-fee')) || 0;
+            const finalValue = value - (value * feePercentage / 100);
+            const date = new Date(formData.get('ad-date'));
+            
+            const adData = {
+                id: Date.now().toString(),
+                type: 'publicidade',
+                client_name: formData.get('ad-client'),
+                username: '',
+                sale_date: formData.get('ad-date'),
+                value: value,
+                followers: 0,
+                fee_percentage: feePercentage,
+                final_value: finalValue,
+                month: date.getMonth() + 1,
+                year: date.getFullYear()
+            };
+            
+            const result = await window.dataSdk.create(adData);
+            
+            btnText.style.display = 'inline';
+            loading.style.display = 'none';
+            button.disabled = false;
+            
+            if (result.isOk) {
+                e.target.reset();
+                showToast('Publicidade adicionada com sucesso!');
+            } else {
+                showToast('Erro ao salvar publicidade', 'error');
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (currentData.length >= 999) {
+                showToast('Limite máximo de 999 registros atingido', 'error');
+                return;
+            }
+            
+            const button = e.target.querySelector('.btn-primary');
+            const btnText = button.querySelector('.btn-text');
+            const loading = button.querySelector('.loading');
+            
+            btnText.style.display = 'none';
+            loading.style.display = 'inline';
+            button.disabled = true;
+            
+            const formData = new FormData(e.target);
+            const value = parseFloat(formData.get('profile-value')) || 0;
+            const date = new Date(formData.get('profile-date'));
+            
+            const profileData = {
+                id: Date.now().toString(),
+                type: 'perfil',
+                client_name: '',
+                username: formData.get('profile-username'),
+                sale_date: formData.get('profile-date'),
+                value: value,
+                followers: parseInt(formData.get('profile-followers')) || 0,
+                fee_percentage: 0,
+                final_value: value,
+                month: date.getMonth() + 1,
+                year: date.getFullYear()
+            };
+            
+            const result = await window.dataSdk.create(profileData);
+            
+            btnText.style.display = 'inline';
+            loading.style.display = 'none';
+            button.disabled = false;
+            
+            if (result.isOk) {
+                e.target.reset();
+                showToast('Venda de perfil adicionada com sucesso!');
+            } else {
+                showToast('Erro ao salvar venda de perfil', 'error');
+            }
+        });
+
+        // Delete functions
+        async function deleteRecord(record) {
+            const result = await window.dataSdk.delete(record);
+            if (result.isOk) {
+                showToast('Registro excluído com sucesso!');
+            } else {
+                showToast('Erro ao excluir registro', 'error');
+            }
+        }
+
+        // Update functions
         function updateDashboard() {
-            const publicidadeData = allData.filter(item => item.type === 'publicidade');
-            const tradingData = allData.filter(item => item.type === 'trading');
+            const filteredData = getFilteredData();
+            const ads = filteredData.filter(item => item.type === 'publicidade');
+            const profiles = filteredData.filter(item => item.type === 'perfil');
             
-            const totalRevenue = allData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            const currentMonth = new Date().getMonth();
+            const totalRevenue = filteredData.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            const totalFees = ads.reduce((sum, item) => sum + ((item.value || 0) * (item.fee_percentage || 0) / 100), 0);
+            const avgTicket = filteredData.length > 0 ? totalRevenue / filteredData.length : 0;
+            const avgFollowers = profiles.length > 0 ? profiles.reduce((sum, item) => sum + (item.followers || 0), 0) / profiles.length : 0;
+            const followerValue = profiles.length > 0 ? profiles.reduce((sum, item) => sum + (item.value || 0), 0) / profiles.reduce((sum, item) => sum + (item.followers || 0), 0) : 0;
+            
+            // Calculate growth compared to previous period
+            const currentMonth = new Date().getMonth() + 1;
             const currentYear = new Date().getFullYear();
-            const monthlySales = allData.filter(item => {
-                const itemDate = new Date(item.sale_date);
-                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
-            }).length;
+            const previousMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+            const previousYear = currentMonth === 1 ? currentYear - 1 : currentYear;
             
-            const profilesSold = tradingData.filter(item => item.status === 'vendido').length;
-            const averageSale = allData.length > 0 ? totalRevenue / allData.length : 0;
+            const currentMonthData = currentData.filter(item => item.month === currentMonth && item.year === currentYear);
+            const previousMonthData = currentData.filter(item => item.month === previousMonth && item.year === previousYear);
             
-            document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
-            document.getElementById('monthly-sales').textContent = monthlySales;
-            document.getElementById('profiles-sold').textContent = profilesSold;
-            document.getElementById('average-sale').textContent = formatCurrency(averageSale);
+            const currentMonthRevenue = currentMonthData.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            const previousMonthRevenue = previousMonthData.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            const revenueGrowth = previousMonthRevenue > 0 ? ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue * 100) : 0;
+            
+            const currentMonthAds = currentMonthData.filter(item => item.type === 'publicidade').length;
+            const previousMonthAds = previousMonthData.filter(item => item.type === 'publicidade').length;
+            const adsGrowth = previousMonthAds > 0 ? ((currentMonthAds - previousMonthAds) / previousMonthAds * 100) : 0;
+            
+            const currentMonthProfiles = currentMonthData.filter(item => item.type === 'perfil').length;
+            const previousMonthProfiles = previousMonthData.filter(item => item.type === 'perfil').length;
+            const profilesGrowth = previousMonthProfiles > 0 ? ((currentMonthProfiles - previousMonthProfiles) / previousMonthProfiles * 100) : 0;
+            
+            // Update UI
+            document.getElementById('total-revenue').textContent = `R$ ${totalRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('total-ads').textContent = ads.length.toString();
+            document.getElementById('total-profiles').textContent = profiles.length.toString();
+            document.getElementById('avg-ticket').textContent = `R$ ${avgTicket.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('total-fees').textContent = `R$ ${totalFees.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('avg-followers').textContent = Math.round(avgFollowers).toLocaleString('pt-BR');
+            
+            // Update growth indicators
+            document.getElementById('revenue-growth').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}% vs mês anterior`;
+            document.getElementById('ads-growth').textContent = `${adsGrowth >= 0 ? '+' : ''}${adsGrowth.toFixed(1)}% vs mês anterior`;
+            document.getElementById('profiles-growth').textContent = `${profilesGrowth >= 0 ? '+' : ''}${profilesGrowth.toFixed(1)}% vs mês anterior`;
+            document.getElementById('fees-percentage').textContent = `${totalRevenue > 0 ? (totalFees / totalRevenue * 100).toFixed(1) : 0}% da receita`;
+            document.getElementById('follower-value').textContent = `R$ ${followerValue.toLocaleString('pt-BR', {minimumFractionDigits: 4})}/seguidor`;
             
             updateCharts();
+            updateAnalytics();
+            updateMetas();
+            updateYearFilter();
+            generateInsights();
         }
-
-        function formatCurrency(value) {
-            const symbol = window.elementSdk?.config?.currency_symbol || defaultConfig.currency_symbol;
-            return `${symbol} ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        }
-
-        function initializeCharts() {
-            const ctx1 = document.getElementById('statusChart').getContext('2d');
-            const ctx2 = document.getElementById('categoryChart').getContext('2d');
+        
+        function getFilteredData() {
+            let filtered = [...currentData];
             
-            statusChart = new Chart(ctx1, {
+            const periodFilter = document.getElementById('period-filter')?.value;
+            const serviceFilter = document.getElementById('service-filter')?.value;
+            const yearFilter = document.getElementById('year-filter')?.value;
+            
+            if (periodFilter && periodFilter !== 'all') {
+                const days = parseInt(periodFilter);
+                const cutoffDate = new Date();
+                cutoffDate.setDate(cutoffDate.getDate() - days);
+                
+                filtered = filtered.filter(item => {
+                    const itemDate = new Date(item.sale_date);
+                    return itemDate >= cutoffDate;
+                });
+            }
+            
+            if (serviceFilter && serviceFilter !== 'all') {
+                filtered = filtered.filter(item => item.type === serviceFilter);
+            }
+            
+            if (yearFilter && yearFilter !== 'all') {
+                filtered = filtered.filter(item => item.year === parseInt(yearFilter));
+            }
+            
+            return filtered;
+        }
+        
+        function updateYearFilter() {
+            const yearFilter = document.getElementById('year-filter');
+            if (!yearFilter) return;
+            
+            const years = [...new Set(currentData.map(item => item.year))].sort((a, b) => b - a);
+            const currentValue = yearFilter.value;
+            
+            yearFilter.innerHTML = '<option value="all">Todos os anos</option>';
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            });
+            
+            if (years.includes(parseInt(currentValue))) {
+                yearFilter.value = currentValue;
+            }
+        }
+
+        function updateAdsList() {
+            const ads = currentData.filter(item => item.type === 'publicidade');
+            const container = document.getElementById('ads-list');
+            
+            if (ads.length === 0) {
+                container.innerHTML = '<div class="empty-state">Nenhuma publicidade cadastrada</div>';
+                return;
+            }
+            
+            container.innerHTML = ads.map(ad => `
+                <div class="table-row">
+                    <div>${ad.client_name}</div>
+                    <div>${new Date(ad.sale_date).toLocaleDateString('pt-BR')}</div>
+                    <div>R$ ${ad.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div>${ad.fee_percentage}%</div>
+                    <div>R$ ${ad.final_value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                    <div>${ad.month}/${ad.year}</div>
+                    <div><button class="btn btn-danger" onclick="deleteRecord(${JSON.stringify(ad).replace(/"/g, '&quot;')})">Excluir</button></div>
+                </div>
+            `).join('');
+        }
+
+        function updateProfilesList() {
+            const profiles = currentData.filter(item => item.type === 'perfil');
+            const container = document.getElementById('profiles-list');
+            
+            if (profiles.length === 0) {
+                container.innerHTML = '<div class="empty-state">Nenhum perfil vendido</div>';
+                return;
+            }
+            
+            container.innerHTML = profiles.map(profile => {
+                const valuePerFollower = profile.followers > 0 ? profile.value / profile.followers : 0;
+                return `
+                    <div class="table-row">
+                        <div>${profile.username}</div>
+                        <div>${new Date(profile.sale_date).toLocaleDateString('pt-BR')}</div>
+                        <div>R$ ${profile.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        <div>${profile.followers.toLocaleString('pt-BR')}</div>
+                        <div>R$ ${valuePerFollower.toLocaleString('pt-BR', {minimumFractionDigits: 4})}</div>
+                        <div>${profile.month}/${profile.year}</div>
+                        <div><button class="btn btn-danger" onclick="deleteRecord(${JSON.stringify(profile).replace(/"/g, '&quot;')})">Excluir</button></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Charts
+        function initializeCharts() {
+            const ctx1 = document.getElementById('revenueChart').getContext('2d');
+            const ctx2 = document.getElementById('servicesChart').getContext('2d');
+            
+            revenueChart = new Chart(ctx1, {
                 type: 'pie',
                 data: {
-                    labels: ['Ativo/Vendido', 'Concluído', 'Negociando', 'Disponível', 'Cancelado'],
+                    labels: [],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0],
+                        data: [],
                         backgroundColor: [
-                            '#10B981', // Verde para ativo/vendido
-                            '#3B82F6', // Azul para concluído
-                            '#F59E0B', // Amarelo para negociando
-                            '#8B5CF6', // Roxo para disponível
-                            '#EF4444'  // Vermelho para cancelado
+                            '#4facfe', '#00f2fe', '#22c55e', '#3b82f6', '#8b5cf6',
+                            '#a855f7', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'
                         ],
-                        borderWidth: 3,
-                        borderColor: '#ffffff',
-                        hoverOffset: 15,
-                        hoverBorderWidth: 4
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -840,50 +1309,22 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom',
                             labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                font: {
-                                    size: 12,
-                                    weight: '600'
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = formatCurrency(context.parsed);
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
+                                color: '#ffffff'
                             }
                         }
                     }
                 }
             });
             
-            categoryChart = new Chart(ctx2, {
+            servicesChart = new Chart(ctx2, {
                 type: 'pie',
                 data: {
-                    labels: ['Publicidade', 'Instagram', 'TikTok', 'YouTube', 'Twitter', 'Facebook'],
+                    labels: ['Publicidade', 'Perfis'],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#8B5CF6', // Roxo para publicidade
-                            '#E1306C', // Rosa para Instagram
-                            '#000000', // Preto para TikTok
-                            '#FF0000', // Vermelho para YouTube
-                            '#1DA1F2', // Azul para Twitter
-                            '#1877F2'  // Azul Facebook
-                        ],
-                        borderWidth: 3,
-                        borderColor: '#ffffff',
-                        hoverOffset: 15,
-                        hoverBorderWidth: 4
+                        data: [0, 0],
+                        backgroundColor: ['#4facfe', '#22c55e'],
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -891,26 +1332,8 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom',
                             labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                font: {
-                                    size: 12,
-                                    weight: '600'
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = formatCurrency(context.parsed);
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
+                                color: '#ffffff'
                             }
                         }
                     }
@@ -919,1067 +1342,319 @@
         }
 
         function updateCharts() {
-            if (!statusChart || !categoryChart) return;
-            
-            // Status chart - agrupa por status
-            const statusData = {
-                'ativo': 0,
-                'vendido': 0,
-                'concluido': 0,
-                'negociando': 0,
-                'disponivel': 0,
-                'cancelado': 0
-            };
-            
-            allData.forEach(item => {
-                const value = item.final_value || item.value || 0;
-                if (item.status === 'ativo' || item.status === 'vendido') {
-                    statusData['ativo'] += value;
-                } else if (statusData.hasOwnProperty(item.status)) {
-                    statusData[item.status] += value;
-                }
+            // Revenue by month chart
+            const monthlyData = {};
+            currentData.forEach(item => {
+                const key = `${item.month}/${item.year}`;
+                monthlyData[key] = (monthlyData[key] || 0) + (item.final_value || 0);
             });
             
-            statusChart.data.datasets[0].data = [
-                statusData.ativo + statusData.vendido,
-                statusData.concluido,
-                statusData.negociando,
-                statusData.disponivel,
-                statusData.cancelado
-            ];
-            statusChart.update();
-            
-            // Category chart - separa publicidade das redes sociais
-            const categoryData = {
-                'publicidade': 0,
-                'instagram': 0,
-                'tiktok': 0,
-                'youtube': 0,
-                'twitter': 0,
-                'facebook': 0
-            };
-            
-            allData.forEach(item => {
-                const value = item.final_value || item.value || 0;
-                if (item.type === 'publicidade') {
-                    categoryData.publicidade += value;
-                } else if (categoryData.hasOwnProperty(item.category)) {
-                    categoryData[item.category] += value;
-                }
+            const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+                const [monthA, yearA] = a.split('/').map(Number);
+                const [monthB, yearB] = b.split('/').map(Number);
+                return yearA - yearB || monthA - monthB;
             });
             
-            categoryChart.data.datasets[0].data = [
-                categoryData.publicidade,
-                categoryData.instagram,
-                categoryData.tiktok,
-                categoryData.youtube,
-                categoryData.twitter,
-                categoryData.facebook
-            ];
-            categoryChart.update();
+            revenueChart.data.labels = sortedMonths;
+            revenueChart.data.datasets[0].data = sortedMonths.map(month => monthlyData[month]);
+            revenueChart.update();
+            
+            // Services distribution chart
+            const ads = currentData.filter(item => item.type === 'publicidade');
+            const profiles = currentData.filter(item => item.type === 'perfil');
+            
+            const adsRevenue = ads.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            const profilesRevenue = profiles.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            
+            servicesChart.data.datasets[0].data = [adsRevenue, profilesRevenue];
+            servicesChart.update();
         }
 
-        // Publicidade functions
-        function showAddPublicidadeForm() {
-            document.getElementById('add-publicidade-form').classList.remove('hidden');
-            document.getElementById('pub-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('pub-client').focus();
-        }
-
-        function hideAddPublicidadeForm() {
-            document.getElementById('add-publicidade-form').classList.add('hidden');
-            document.getElementById('publicidade-form').reset();
-        }
-
-        async function handlePublicidadeSubmit(event) {
-            event.preventDefault();
-            
-            if (currentRecordCount >= 999) {
-                showToast("Limite máximo de 999 registros atingido. Exclua alguns itens primeiro.", "error");
-                return;
-            }
-            
-            const submitBtn = document.getElementById('pub-submit-btn');
-            const submitText = document.getElementById('pub-submit-text');
-            const loading = document.getElementById('pub-loading');
-            
-            // Validação dos campos
-            const clientName = document.getElementById('pub-client').value.trim();
-            const profileName = document.getElementById('pub-profile').value.trim();
-            const value = parseFloat(document.getElementById('pub-value').value);
-            const saleDate = document.getElementById('pub-date').value;
-            
-            if (!clientName || !profileName || !value || !saleDate) {
-                showToast("Por favor, preencha todos os campos obrigatórios.", "error");
-                return;
-            }
-            
-            if (value <= 0) {
-                showToast("O valor deve ser maior que zero.", "error");
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            submitText.textContent = 'Salvando...';
-            loading.classList.remove('hidden');
-            
-            const feePercentage = parseFloat(document.getElementById('pub-fee').value) || 0;
-            const hasFee = feePercentage > 0;
-            const finalValue = hasFee ? value - (value * feePercentage / 100) : value;
-            
-            const record = {
-                id: Date.now().toString(),
-                type: 'publicidade',
-                client_name: clientName,
-                profile_username: profileName,
-                sale_date: saleDate,
-                value: value,
-                has_fee: hasFee,
-                fee_percentage: feePercentage,
-                final_value: finalValue,
-                status: document.getElementById('pub-status').value,
-                category: 'publicidade',
-                followers: 0,
-                created_at: new Date().toISOString()
-            };
-            
-            if (window.dataSdk) {
-                const result = await window.dataSdk.create(record);
-                if (result.isOk) {
-                    hideAddPublicidadeForm();
-                    showToast("Campanha publicitária salva com sucesso! 🎉", "success");
-                } else {
-                    showToast("Erro ao salvar campanha. Tente novamente.", "error");
-                }
-            }
-            
-            submitBtn.disabled = false;
-            submitText.textContent = 'Salvar Campanha';
-            loading.classList.add('hidden');
-        }
-
-        function updatePublicidadeList() {
-            const publicidadeData = allData.filter(item => item.type === 'publicidade');
-            const tbody = document.getElementById('publicidade-list');
-            
-            if (publicidadeData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-gray-500">Nenhuma campanha cadastrada ainda</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = publicidadeData.map(item => `
-                <tr class="hover:bg-purple-50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${item.client_name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.profile_username}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${formatDate(item.sale_date)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${formatCurrency(item.value)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.fee_percentage}%</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">${formatCurrency(item.final_value)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.status)}">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="deleteRecord('${item.__backendId}')" class="text-red-500 hover:text-red-700 font-semibold transition-colors">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Trading functions
-        function showAddTradingForm() {
-            document.getElementById('add-trading-form').classList.remove('hidden');
-            document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('trade-username').focus();
-        }
-
-        function hideAddTradingForm() {
-            document.getElementById('add-trading-form').classList.add('hidden');
-            document.getElementById('trading-form').reset();
-        }
-
-        async function handleTradingSubmit(event) {
-            event.preventDefault();
-            
-            if (currentRecordCount >= 999) {
-                showToast("Limite máximo de 999 registros atingido. Exclua alguns itens primeiro.", "error");
-                return;
-            }
-            
-            const submitBtn = document.getElementById('trade-submit-btn');
-            const submitText = document.getElementById('trade-submit-text');
-            const loading = document.getElementById('trade-loading');
-            
-            // Validação dos campos
-            const username = document.getElementById('trade-username').value.trim();
-            const followers = parseInt(document.getElementById('trade-followers').value);
-            const value = parseFloat(document.getElementById('trade-value').value);
-            const saleDate = document.getElementById('trade-date').value;
-            
-            if (!username || !followers || !value || !saleDate) {
-                showToast("Por favor, preencha todos os campos obrigatórios.", "error");
-                return;
-            }
-            
-            if (followers <= 0) {
-                showToast("O número de seguidores deve ser maior que zero.", "error");
-                return;
-            }
-            
-            if (value <= 0) {
-                showToast("O valor de venda deve ser maior que zero.", "error");
-                return;
-            }
-            
-            // Remove @ do username se existir
-            const cleanUsername = username.replace('@', '');
-            
-            submitBtn.disabled = true;
-            submitText.textContent = 'Salvando...';
-            loading.classList.remove('hidden');
-            
-            const record = {
-                id: Date.now().toString(),
-                type: 'trading',
-                client_name: '',
-                profile_username: cleanUsername,
-                sale_date: saleDate,
-                value: value,
-                followers: followers,
-                has_fee: false,
-                fee_percentage: 0,
-                final_value: value,
-                status: document.getElementById('trade-status').value,
-                category: document.getElementById('trade-category').value,
-                created_at: new Date().toISOString()
-            };
-            
-            if (window.dataSdk) {
-                const result = await window.dataSdk.create(record);
-                if (result.isOk) {
-                    hideAddTradingForm();
-                    showToast("Venda de perfil registrada com sucesso! 💎", "success");
-                } else {
-                    showToast("Erro ao salvar venda. Tente novamente.", "error");
-                }
-            }
-            
-            submitBtn.disabled = false;
-            submitText.textContent = 'Salvar Venda';
-            loading.classList.add('hidden');
-        }
-
-        function updateTradingList() {
-            const tradingData = allData.filter(item => item.type === 'trading');
-            const tbody = document.getElementById('trading-list');
-            
-            if (tradingData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Nenhum perfil cadastrado ainda</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = tradingData.map(item => `
-                <tr class="hover:bg-purple-50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">@${item.profile_username}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.followers.toLocaleString('pt-BR')}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">${item.category}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${formatDate(item.sale_date)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">${formatCurrency(item.value)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.status)}">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="deleteRecord('${item.__backendId}')" class="text-red-500 hover:text-red-700 font-semibold transition-colors">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Utility functions
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('pt-BR');
-        }
-
-        function getStatusColor(status) {
-            const colors = {
-                'ativo': 'bg-green-100 text-green-800',
-                'concluido': 'bg-blue-100 text-blue-800',
-                'cancelado': 'bg-red-100 text-red-800',
-                'vendido': 'bg-green-100 text-green-800',
-                'negociando': 'bg-yellow-100 text-yellow-800',
-                'disponivel': 'bg-purple-100 text-purple-800'
-            };
-            return colors[status] || 'bg-gray-100 text-gray-800';
-        }
-
-        async function deleteRecord(backendId) {
-            const record = allData.find(item => item.__backendId === backendId);
-            if (!record) return;
-            
-            // Confirmação inline
-            const button = event.target;
-            const originalText = button.textContent;
-            
-            button.textContent = 'Confirmar?';
-            button.className = 'text-red-600 hover:text-red-800 font-bold transition-colors bg-red-50 px-3 py-1 rounded-lg';
-            
-            // Timeout para reverter se não confirmar
-            const timeout = setTimeout(() => {
-                button.textContent = originalText;
-                button.className = 'text-red-500 hover:text-red-700 font-semibold transition-colors';
-            }, 3000);
-            
-            // Novo evento de clique para confirmação
-            const confirmHandler = async (e) => {
-                e.stopPropagation();
-                clearTimeout(timeout);
-                button.removeEventListener('click', confirmHandler);
-                
-                button.textContent = 'Excluindo...';
-                button.disabled = true;
-                
-                if (window.dataSdk) {
-                    const result = await window.dataSdk.delete(record);
-                    if (result.isOk) {
-                        showToast("Registro excluído com sucesso! ✅", "success");
-                    } else {
-                        showToast("Erro ao excluir registro. Tente novamente.", "error");
-                        button.textContent = originalText;
-                        button.className = 'text-red-500 hover:text-red-700 font-semibold transition-colors';
-                        button.disabled = false;
-                    }
-                }
-            };
-            
-            button.addEventListener('click', confirmHandler);
-        }
-
-        // Função para calcular estatísticas avançadas
-        function calculateAdvancedStats() {
-            const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-            const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-            const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-            
-            // Dados do mês atual
-            const currentMonthData = allData.filter(item => {
-                const itemDate = new Date(item.sale_date);
-                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
-            });
-            
-            // Dados do mês passado
-            const lastMonthData = allData.filter(item => {
-                const itemDate = new Date(item.sale_date);
-                return itemDate.getMonth() === lastMonth && itemDate.getFullYear() === lastMonthYear;
-            });
-            
-            const currentMonthRevenue = currentMonthData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            const lastMonthRevenue = lastMonthData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            
-            const growthPercentage = lastMonthRevenue > 0 ? 
-                ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(1) : 0;
-            
-            return {
-                currentMonthRevenue,
-                lastMonthRevenue,
-                growthPercentage,
-                currentMonthSales: currentMonthData.length,
-                lastMonthSales: lastMonthData.length
-            };
-        }
-
-        // Função para exportar dados (simulação)
-        function exportData() {
-            if (allData.length === 0) {
-                showToast("Não há dados para exportar.", "error");
-                return;
-            }
-            
-            const csvContent = generateCSV();
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `trivaci_dados_${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast("Dados exportados com sucesso! 📊", "success");
-            }
-        }
-
-        function generateCSV() {
-            const headers = ['Tipo', 'Cliente', 'Perfil', 'Data', 'Valor', 'Taxa %', 'Valor Final', 'Seguidores', 'Categoria', 'Status'];
-            const rows = allData.map(item => [
-                item.type,
-                item.client_name || '',
-                item.profile_username,
-                item.sale_date,
-                item.value,
-                item.fee_percentage || 0,
-                item.final_value || item.value,
-                item.followers || 0,
-                item.category,
-                item.status
-            ]);
-            
-            return [headers, ...rows].map(row => 
-                row.map(field => `"${field}"`).join(',')
-            ).join('\n');
-        }
-
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = `fixed top-6 right-6 px-8 py-4 rounded-2xl text-white font-semibold z-50 shadow-2xl transform transition-all duration-300 ${
-                type === 'success' ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'
-            }`;
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.style.transform = 'translateX(100%)';
-            document.body.appendChild(toast);
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
             
             setTimeout(() => {
-                toast.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
+                toast.classList.remove('show');
             }, 3000);
         }
 
-        // Event listeners
-        document.getElementById('publicidade-form').addEventListener('submit', handlePublicidadeSubmit);
-        document.getElementById('trading-form').addEventListener('submit', handleTradingSubmit);
-
-        // Analytics Functions
+        // New advanced functions
         function updateAnalytics() {
-            const totalRevenue = allData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            const totalSales = allData.length;
+            const filteredData = getFilteredData();
+            const ads = filteredData.filter(item => item.type === 'publicidade');
+            const profiles = filteredData.filter(item => item.type === 'perfil');
             
-            // ROI Calculation (simplified)
-            const avgROI = totalSales > 0 ? ((totalRevenue / totalSales) * 0.3).toFixed(1) : 0;
-            document.getElementById('avg-roi').textContent = `${avgROI}%`;
+            // Conversion rate (assuming some logic for conversion)
+            const conversionRate = filteredData.length > 0 ? (filteredData.length / (filteredData.length + 10)) * 100 : 0;
             
-            // Conversion Rate (simplified)
-            const conversionRate = totalSales > 0 ? (totalSales * 2.5).toFixed(1) : 0;
-            document.getElementById('conversion-rate').textContent = `${conversionRate}%`;
-            
-            // Average Ticket
-            const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
-            document.getElementById('avg-ticket').textContent = formatCurrency(avgTicket);
-            
-            // Monthly Forecast (AI simulation)
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            const currentMonthData = allData.filter(item => {
-                const itemDate = new Date(item.sale_date);
-                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
-            });
-            const currentMonthRevenue = currentMonthData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const currentDay = new Date().getDate();
-            const forecast = (currentMonthRevenue / currentDay) * daysInMonth;
-            document.getElementById('monthly-forecast').textContent = formatCurrency(forecast);
-            
-            updateAdvancedCharts();
-        }
-
-        function updateAdvancedCharts() {
-            if (trendsChart) {
-                // Generate 6 months of trend data
-                const months = [];
-                const revenues = [];
-                for (let i = 5; i >= 0; i--) {
-                    const date = new Date();
-                    date.setMonth(date.getMonth() - i);
-                    months.push(date.toLocaleDateString('pt-BR', { month: 'short' }));
-                    
-                    const monthRevenue = allData.filter(item => {
-                        const itemDate = new Date(item.sale_date);
-                        return itemDate.getMonth() === date.getMonth() && itemDate.getFullYear() === date.getFullYear();
-                    }).reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-                    
-                    revenues.push(monthRevenue);
-                }
-                
-                trendsChart.data.labels = months;
-                trendsChart.data.datasets[0].data = revenues;
-                trendsChart.update();
-            }
-            
-            if (platformChart) {
-                const platformData = {
-                    'Instagram': 0,
-                    'TikTok': 0,
-                    'YouTube': 0,
-                    'Twitter': 0,
-                    'Facebook': 0
-                };
-                
-                allData.forEach(item => {
-                    const value = item.final_value || item.value || 0;
-                    if (item.category && platformData.hasOwnProperty(item.category.charAt(0).toUpperCase() + item.category.slice(1))) {
-                        platformData[item.category.charAt(0).toUpperCase() + item.category.slice(1)] += value;
-                    }
-                });
-                
-                platformChart.data.datasets[0].data = Object.values(platformData);
-                platformChart.update();
-            }
-        }
-
-        function initializeAdvancedCharts() {
-            // Trends Chart
-            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
-            trendsChart = new Chart(trendsCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                    datasets: [{
-                        label: 'Receita Mensal',
-                        data: [0, 0, 0, 0, 0, 0],
-                        borderColor: '#8B5CF6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR');
-                                }
-                            }
-                        }
-                    }
-                }
+            // Best month
+            const monthlyRevenue = {};
+            filteredData.forEach(item => {
+                const key = `${item.month}/${item.year}`;
+                monthlyRevenue[key] = (monthlyRevenue[key] || 0) + (item.final_value || 0);
             });
             
-            // Platform Performance Chart
-            const platformCtx = document.getElementById('platformChart').getContext('2d');
-            platformChart = new Chart(platformCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Instagram', 'TikTok', 'YouTube', 'Twitter', 'Facebook'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#E1306C',
-                            '#000000',
-                            '#FF0000',
-                            '#1DA1F2',
-                            '#1877F2'
-                        ],
-                        borderRadius: 8,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR');
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function exportAnalytics() {
-            const analyticsData = {
-                totalRevenue: allData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0),
-                totalSales: allData.length,
-                avgTicket: allData.length > 0 ? allData.reduce((sum, item) => sum + (item.final_value || item.value || 0), 0) / allData.length : 0,
-                platformBreakdown: {},
-                monthlyTrends: {}
-            };
+            const bestMonth = Object.keys(monthlyRevenue).reduce((a, b) => 
+                monthlyRevenue[a] > monthlyRevenue[b] ? a : b, Object.keys(monthlyRevenue)[0] || '-'
+            );
             
-            const csvContent = `Relatório Analytics Trivaci\nData: ${new Date().toLocaleDateString('pt-BR')}\n\nReceita Total: R$ ${analyticsData.totalRevenue.toLocaleString('pt-BR')}\nVendas Totais: ${analyticsData.totalSales}\nTicket Médio: R$ ${analyticsData.avgTicket.toLocaleString('pt-BR')}`;
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `trivaci_analytics_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast("Relatório de analytics exportado com sucesso! 📊", "success");
-        }
-
-        function generateForecast() {
-            const currentMonthRevenue = allData.filter(item => {
-                const itemDate = new Date(item.sale_date);
-                const now = new Date();
-                return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
-            }).reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            
-            const daysInMonth = new Date().getDate();
-            const avgDailyRevenue = currentMonthRevenue / daysInMonth;
-            const remainingDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() - daysInMonth;
-            const projectedRevenue = currentMonthRevenue + (avgDailyRevenue * remainingDays);
-            
-            showToast(`Previsão IA: R$ ${projectedRevenue.toLocaleString('pt-BR')} até o fim do mês! 🔮`, "success");
-        }
-
-        // CRM Functions
-        function showAddClientForm() {
-            document.getElementById('add-client-modal').classList.remove('hidden');
-            document.getElementById('client-name').focus();
-        }
-
-        function hideAddClientForm() {
-            document.getElementById('add-client-modal').classList.add('hidden');
-            document.getElementById('client-form').reset();
-        }
-
-        async function handleClientSubmit(event) {
-            event.preventDefault();
-            
-            const clientData = {
-                id: Date.now().toString(),
-                type: 'client',
-                name: document.getElementById('client-name').value.trim(),
-                company: document.getElementById('client-company').value.trim(),
-                whatsapp: document.getElementById('client-whatsapp').value.trim(),
-                email: document.getElementById('client-email').value.trim(),
-                tag: document.getElementById('client-tag').value,
-                budget: parseFloat(document.getElementById('client-budget').value) || 0,
-                notes: document.getElementById('client-notes').value.trim(),
-                created_at: new Date().toISOString()
-            };
-            
-            clientsData.push(clientData);
-            updateClientsGrid();
-            hideAddClientForm();
-            showToast("Cliente adicionado com sucesso! 👤", "success");
-        }
-
-        function updateClientsGrid() {
-            const grid = document.getElementById('clients-grid');
-            
-            if (clientsData.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">Nenhum cliente cadastrado ainda</div>';
-                return;
+            // Growth trend
+            const months = Object.keys(monthlyRevenue).sort();
+            let growthTrend = 0;
+            if (months.length >= 2) {
+                const lastMonth = monthlyRevenue[months[months.length - 1]];
+                const secondLastMonth = monthlyRevenue[months[months.length - 2]];
+                growthTrend = secondLastMonth > 0 ? ((lastMonth - secondLastMonth) / secondLastMonth * 100) : 0;
             }
             
-            grid.innerHTML = clientsData.map(client => `
-                <div class="card-modern p-6 rounded-2xl hover:shadow-lg transition-all duration-300">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg">${client.name}</h4>
-                            ${client.company ? `<p class="text-gray-600 text-sm">${client.company}</p>` : ''}
-                        </div>
-                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${getTagColor(client.tag)}">
-                            ${client.tag}
-                        </span>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        ${client.whatsapp ? `<p class="text-sm text-gray-600">📱 ${client.whatsapp}</p>` : ''}
-                        ${client.email ? `<p class="text-sm text-gray-600">✉️ ${client.email}</p>` : ''}
-                        ${client.budget > 0 ? `<p class="text-sm text-gray-600">💰 Orçamento: ${formatCurrency(client.budget)}</p>` : ''}
-                    </div>
-                    ${client.notes ? `<p class="text-sm text-gray-500 mb-4">${client.notes}</p>` : ''}
-                    <div class="flex gap-2">
-                        <button onclick="sendWhatsApp('${client.whatsapp}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                            WhatsApp
-                        </button>
-                        <button onclick="generateProposal('${client.id}')" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                            Proposta
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getTagColor(tag) {
-            const colors = {
-                'vip': 'bg-yellow-100 text-yellow-800',
-                'recorrente': 'bg-green-100 text-green-800',
-                'novo': 'bg-blue-100 text-blue-800',
-                'inativo': 'bg-gray-100 text-gray-800'
-            };
-            return colors[tag] || 'bg-gray-100 text-gray-800';
-        }
-
-        function filterClients() {
-            // Implementar filtros de clientes
-            showToast("Filtros aplicados! 🔍", "success");
-        }
-
-        function sendWhatsApp(phone) {
-            if (phone) {
-                const message = encodeURIComponent("Olá! Entrando em contato da Trivaci Digital Agency. Como posso ajudá-lo?");
-                window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=${message}`, '_blank', 'noopener,noreferrer');
+            // Average deal size
+            const avgDealSize = filteredData.length > 0 ? 
+                filteredData.reduce((sum, item) => sum + (item.final_value || 0), 0) / filteredData.length : 0;
+            
+            // Update analytics UI
+            if (document.getElementById('conversion-rate')) {
+                document.getElementById('conversion-rate').textContent = `${conversionRate.toFixed(1)}%`;
+                document.getElementById('best-month').textContent = bestMonth;
+                document.getElementById('growth-trend').textContent = `${growthTrend >= 0 ? '+' : ''}${growthTrend.toFixed(1)}%`;
+                document.getElementById('avg-deal-size').textContent = `R$ ${avgDealSize.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             }
         }
-
-        function sendBulkWhatsApp() {
-            showToast("Funcionalidade de WhatsApp em massa em desenvolvimento! 📱", "success");
-        }
-
-        function generateProposal(clientId) {
-            showToast("Proposta automática gerada! 📄", "success");
-        }
-
-        // Marketplace Functions
-        function showAddMarketplaceItem() {
-            showToast("Adicionar perfil à vitrine - funcionalidade em desenvolvimento! 🏪", "success");
-        }
-
-        function startAuction() {
-            showToast("Sistema de leilão iniciado! 🔨", "success");
-        }
-
-        function filterMarketplace() {
-            showToast("Filtros do marketplace aplicados! 🔍", "success");
-        }
-
-        function calculatePrice() {
-            const followers = parseInt(document.getElementById('calc-followers').value) || 0;
-            const engagement = parseFloat(document.getElementById('calc-engagement').value) || 0;
-            const niche = parseFloat(document.getElementById('calc-niche').value) || 1.0;
-            
-            if (followers === 0) {
-                showToast("Por favor, insira o número de seguidores!", "error");
-                return;
-            }
-            
-            // Algoritmo de precificação
-            const basePrice = followers * 0.12; // R$ 0.12 por seguidor
-            const engagementMultiplier = Math.max(0.5, engagement / 3.0); // Normalizar engajamento
-            const finalPrice = basePrice * engagementMultiplier * niche;
-            
-            document.getElementById('suggested-price').textContent = formatCurrency(finalPrice);
-            document.getElementById('price-result').classList.remove('hidden');
-            
-            showToast("Preço calculado com sucesso! 💰", "success");
-        }
-
-        // Financial Functions
-        function updateFinancialData() {
-            const grossRevenue = allData.reduce((sum, item) => sum + (item.value || 0), 0);
-            const totalCommissions = allData.reduce((sum, item) => sum + ((item.value || 0) * (item.fee_percentage || 0) / 100), 0);
-            const netRevenue = grossRevenue - totalCommissions;
-            
-            document.getElementById('gross-revenue').textContent = formatCurrency(grossRevenue);
-            document.getElementById('total-commissions').textContent = formatCurrency(totalCommissions);
-            document.getElementById('net-revenue').textContent = formatCurrency(netRevenue);
-            
-            // Update goal progress
-            const monthlyGoal = 50000; // R$ 50.000 meta padrão
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            const currentMonthRevenue = allData.filter(item => {
-                const itemDate = new Date(item.sale_date);
-                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
-            }).reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-            
-            const goalProgress = (currentMonthRevenue / monthlyGoal * 100).toFixed(0);
-            document.getElementById('goal-progress').textContent = `🎯 ${goalProgress}% atingido`;
-            
-            updateFinancialCharts();
-        }
-
-        function updateFinancialCharts() {
-            if (cashFlowChart) {
-                // Generate cash flow data
-                const months = [];
-                const revenues = [];
-                for (let i = 5; i >= 0; i--) {
-                    const date = new Date();
-                    date.setMonth(date.getMonth() - i);
-                    months.push(date.toLocaleDateString('pt-BR', { month: 'short' }));
-                    
-                    const monthRevenue = allData.filter(item => {
-                        const itemDate = new Date(item.sale_date);
-                        return itemDate.getMonth() === date.getMonth() && itemDate.getFullYear() === date.getFullYear();
-                    }).reduce((sum, item) => sum + (item.final_value || item.value || 0), 0);
-                    
-                    revenues.push(monthRevenue);
-                }
-                
-                cashFlowChart.data.labels = months;
-                cashFlowChart.data.datasets[0].data = revenues;
-                cashFlowChart.update();
-            }
-            
-            if (profitabilityChart) {
-                const categoryProfits = {
-                    'Publicidade': 0,
-                    'Instagram': 0,
-                    'TikTok': 0,
-                    'YouTube': 0,
-                    'Twitter': 0
-                };
-                
-                allData.forEach(item => {
-                    const profit = (item.final_value || item.value || 0) * 0.7; // 70% profit margin
-                    if (item.type === 'publicidade') {
-                        categoryProfits['Publicidade'] += profit;
-                    } else if (categoryProfits.hasOwnProperty(item.category?.charAt(0).toUpperCase() + item.category?.slice(1))) {
-                        categoryProfits[item.category.charAt(0).toUpperCase() + item.category.slice(1)] += profit;
-                    }
-                });
-                
-                profitabilityChart.data.datasets[0].data = Object.values(categoryProfits);
-                profitabilityChart.update();
-            }
-        }
-
-        function initializeFinancialCharts() {
-            // Cash Flow Chart
-            const cashFlowCtx = document.getElementById('cashFlowChart').getContext('2d');
-            cashFlowChart = new Chart(cashFlowCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                    datasets: [{
-                        label: 'Fluxo de Caixa',
-                        data: [0, 0, 0, 0, 0, 0],
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR');
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Profitability Chart
-            const profitabilityCtx = document.getElementById('profitabilityChart').getContext('2d');
-            profitabilityChart = new Chart(profitabilityCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Publicidade', 'Instagram', 'TikTok', 'YouTube', 'Twitter'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#8B5CF6',
-                            '#E1306C',
-                            '#000000',
-                            '#FF0000',
-                            '#1DA1F2'
-                        ],
-                        borderWidth: 3,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        function showAddGoalForm() {
-            showToast("Adicionar nova meta - funcionalidade em desenvolvimento! 🎯", "success");
-        }
-
-        function exportFinancialReport() {
-            const grossRevenue = allData.reduce((sum, item) => sum + (item.value || 0), 0);
-            const totalCommissions = allData.reduce((sum, item) => sum + ((item.value || 0) * (item.fee_percentage || 0) / 100), 0);
-            const netRevenue = grossRevenue - totalCommissions;
-            
-            const reportContent = `Relatório Financeiro Trivaci\nData: ${new Date().toLocaleDateString('pt-BR')}\n\nReceita Bruta: R$ ${grossRevenue.toLocaleString('pt-BR')}\nComissões Pagas: R$ ${totalCommissions.toLocaleString('pt-BR')}\nReceita Líquida: R$ ${netRevenue.toLocaleString('pt-BR')}`;
-            
-            const blob = new Blob([reportContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `trivaci_financeiro_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast("Relatório financeiro exportado! 📊", "success");
-        }
-
-        // Configuration Functions
-        function exportAllData() {
-            if (allData.length === 0) {
-                showToast("Não há dados para exportar.", "error");
-                return;
-            }
-            
-            const csvContent = generateCSV();
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `trivaci_completo_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast("Dados completos exportados! 📊", "success");
-        }
-
-        function generateBackup() {
-            const backupData = {
-                sales: allData,
-                clients: clientsData,
-                goals: goalsData,
-                marketplace: marketplaceData,
-                timestamp: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `trivaci_backup_${new Date().toISOString().split('T')[0]}.json`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast("Backup gerado com sucesso! 💾", "success");
-        }
-
-        function resetAllData() {
-            const confirmButton = event.target;
-            const originalText = confirmButton.textContent;
-            
-            confirmButton.innerHTML = '<div class="text-3xl mb-3">⚠️</div><h4 class="font-bold text-red-800 mb-2">Confirmar Exclusão?</h4><p class="text-sm text-red-600">Clique novamente para confirmar</p>';
-            
-            const timeout = setTimeout(() => {
-                confirmButton.innerHTML = '<div class="text-3xl mb-3">🗑️</div><h4 class="font-bold text-red-800 mb-2">Limpar Dados</h4><p class="text-sm text-red-600">Remover todos os registros</p>';
-            }, 5000);
-            
-            const confirmHandler = async () => {
-                clearTimeout(timeout);
-                confirmButton.removeEventListener('click', confirmHandler);
-                
-                // Clear all data arrays
-                allData = [];
-                clientsData = [];
-                goalsData = [];
-                marketplaceData = [];
-                currentRecordCount = 0;
-                
-                // Update all displays
-                updateDashboard();
-                updatePublicidadeList();
-                updateTradingList();
-                updateClientsGrid();
-                updateAnalytics();
-                updateFinancialData();
-                
-                showToast("Todos os dados foram removidos! 🗑️", "success");
-                
-                confirmButton.innerHTML = '<div class="text-3xl mb-3">🗑️</div><h4 class="font-bold text-red-800 mb-2">Limpar Dados</h4><p class="text-sm text-red-600">Remover todos os registros</p>';
-            };
-            
-            confirmButton.addEventListener('click', confirmHandler);
-        }
-
-        // Keyboard Shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey) {
-                switch(e.key) {
-                    case '1':
-                        e.preventDefault();
-                        showSection('dashboard');
-                        break;
-                    case '2':
-                        e.preventDefault();
-                        showSection('analytics');
-                        break;
-                    case 'n':
-                        e.preventDefault();
-                        showAddTradingForm();
-                        break;
-                    case 'k':
-                        e.preventDefault();
-                        document.getElementById('client-search')?.focus();
-                        break;
-                    case 'e':
-                        e.preventDefault();
-                        exportAllData();
-                        break;
-                }
-            }
-        });
-
-        // Enhanced Data Handler
-        const enhancedDataHandler = {
-            onDataChanged(data) {
-                allData = data;
-                currentRecordCount = data.length;
-                updateDashboard();
-                updatePublicidadeList();
-                updateTradingList();
-                updateAnalytics();
-                updateFinancialData();
-            }
-        };
-
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', initializeApp);
         
-        // Add event listeners for forms
-        document.getElementById('client-form').addEventListener('submit', handleClientSubmit);
+        function updateMetas() {
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            const currentMonthData = currentData.filter(item => item.month === currentMonth && item.year === currentYear);
+            
+            const currentRevenue = currentMonthData.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            const currentAds = currentMonthData.filter(item => item.type === 'publicidade').length;
+            const currentProfiles = currentMonthData.filter(item => item.type === 'perfil').length;
+            
+            const metaKey = `${currentMonth}-${currentYear}`;
+            const meta = currentMetas[metaKey] || {};
+            
+            // Calculate progress
+            const revenueProgress = meta.revenue ? Math.min((currentRevenue / meta.revenue) * 100, 100) : 0;
+            const adsProgress = meta.ads ? Math.min((currentAds / meta.ads) * 100, 100) : 0;
+            const profilesProgress = meta.profiles ? Math.min((currentProfiles / meta.profiles) * 100, 100) : 0;
+            
+            // Update progress UI
+            if (document.getElementById('meta-progress-revenue')) {
+                document.getElementById('meta-progress-revenue').textContent = `${revenueProgress.toFixed(0)}%`;
+                document.getElementById('progress-revenue').style.width = `${revenueProgress}%`;
+                
+                document.getElementById('meta-progress-ads').textContent = `${adsProgress.toFixed(0)}%`;
+                document.getElementById('progress-ads').style.width = `${adsProgress}%`;
+                
+                document.getElementById('meta-progress-profiles').textContent = `${profilesProgress.toFixed(0)}%`;
+                document.getElementById('progress-profiles').style.width = `${profilesProgress}%`;
+            }
+        }
+        
+        function saveMeta() {
+            const revenue = parseFloat(document.getElementById('meta-revenue').value) || 0;
+            const ads = parseInt(document.getElementById('meta-ads').value) || 0;
+            const profiles = parseInt(document.getElementById('meta-profiles').value) || 0;
+            const monthInput = document.getElementById('meta-month').value;
+            
+            if (!monthInput) {
+                showToast('Selecione um mês/ano para a meta', 'error');
+                return;
+            }
+            
+            const [year, month] = monthInput.split('-');
+            const metaKey = `${month}-${year}`;
+            
+            currentMetas[metaKey] = { revenue, ads, profiles };
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('trivaci-metas', JSON.stringify(currentMetas));
+            
+            showToast('Meta salva com sucesso!');
+            updateMetas();
+        }
+        
+        function generateReport() {
+            const reportType = document.getElementById('report-type').value;
+            const period = document.getElementById('report-period').value;
+            
+            if (!period && reportType !== 'yearly') {
+                showToast('Selecione um período para o relatório', 'error');
+                return;
+            }
+            
+            let reportData = [];
+            let title = '';
+            
+            switch (reportType) {
+                case 'monthly':
+                    const [year, month] = period.split('-');
+                    reportData = currentData.filter(item => 
+                        item.month === parseInt(month) && item.year === parseInt(year)
+                    );
+                    title = `Relatório Mensal - ${month}/${year}`;
+                    break;
+                    
+                case 'quarterly':
+                    // Implementation for quarterly report
+                    title = 'Relatório Trimestral';
+                    break;
+                    
+                case 'yearly':
+                    const reportYear = period ? period.split('-')[0] : new Date().getFullYear();
+                    reportData = currentData.filter(item => item.year === parseInt(reportYear));
+                    title = `Relatório Anual - ${reportYear}`;
+                    break;
+                    
+                case 'client':
+                    // Group by client
+                    title = 'Relatório por Cliente';
+                    break;
+            }
+            
+            displayReport(reportData, title);
+        }
+        
+        function displayReport(data, title) {
+            const reportContent = document.getElementById('report-content');
+            const reportDataDiv = document.getElementById('report-data');
+            
+            if (data.length === 0) {
+                reportDataDiv.innerHTML = '<div class="empty-state">Nenhum dado encontrado para o período selecionado</div>';
+            } else {
+                const totalRevenue = data.reduce((sum, item) => sum + (item.final_value || 0), 0);
+                const ads = data.filter(item => item.type === 'publicidade');
+                const profiles = data.filter(item => item.type === 'perfil');
+                
+                reportDataDiv.innerHTML = `
+                    <div style="padding: 20px;">
+                        <h3>${title}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
+                            <div>
+                                <strong>Receita Total:</strong><br>
+                                R$ ${totalRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                            </div>
+                            <div>
+                                <strong>Publicidades:</strong><br>
+                                ${ads.length} vendas
+                            </div>
+                            <div>
+                                <strong>Perfis:</strong><br>
+                                ${profiles.length} vendas
+                            </div>
+                            <div>
+                                <strong>Ticket Médio:</strong><br>
+                                R$ ${(totalRevenue / data.length).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            reportContent.style.display = 'block';
+        }
+        
+        function exportData(format) {
+            const data = getFilteredData();
+            
+            if (format === 'pdf') {
+                // Simulate PDF export
+                showToast('Funcionalidade de exportação PDF será implementada em breve');
+            } else if (format === 'excel') {
+                // Simulate Excel export
+                showToast('Funcionalidade de exportação Excel será implementada em breve');
+            }
+        }
+        
+        function generateInsights() {
+            const insights = [];
+            const filteredData = getFilteredData();
+            
+            if (filteredData.length === 0) {
+                document.getElementById('weekly-insights').textContent = 'Adicione alguns dados para ver insights personalizados.';
+                return;
+            }
+            
+            // Revenue insights
+            const totalRevenue = filteredData.reduce((sum, item) => sum + (item.final_value || 0), 0);
+            const avgTicket = totalRevenue / filteredData.length;
+            
+            if (avgTicket > 5000) {
+                insights.push('🎯 Excelente! Seu ticket médio está acima de R$ 5.000');
+            }
+            
+            // Growth insights
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            const thisMonthData = currentData.filter(item => item.month === currentMonth && item.year === currentYear);
+            
+            if (thisMonthData.length > 0) {
+                insights.push(`📈 Você já tem ${thisMonthData.length} vendas este mês`);
+            }
+            
+            // Service mix insights
+            const ads = filteredData.filter(item => item.type === 'publicidade');
+            const profiles = filteredData.filter(item => item.type === 'perfil');
+            
+            if (ads.length > profiles.length * 2) {
+                insights.push('💡 Considere focar mais em vendas de perfis para diversificar');
+            }
+            
+            // Best performing insights
+            const clientRevenue = {};
+            filteredData.forEach(item => {
+                if (item.client_name) {
+                    clientRevenue[item.client_name] = (clientRevenue[item.client_name] || 0) + (item.final_value || 0);
+                }
+            });
+            
+            const bestClient = Object.keys(clientRevenue).reduce((a, b) => 
+                clientRevenue[a] > clientRevenue[b] ? a : b, ''
+            );
+            
+            if (bestClient) {
+                insights.push(`🏆 Seu melhor cliente é: ${bestClient}`);
+            }
+            
+            document.getElementById('weekly-insights').innerHTML = insights.length > 0 ? 
+                insights.join('<br><br>') : 
+                'Continue adicionando dados para insights mais detalhados.';
+        }
+        
+        // Add real-time value calculation for forms
+        function setupFormCalculations() {
+            const adValue = document.getElementById('ad-value');
+            const adFee = document.getElementById('ad-fee');
+            const finalValuePreview = document.getElementById('final-value-preview');
+            
+            function updateFinalValue() {
+                const value = parseFloat(adValue.value) || 0;
+                const fee = parseFloat(adFee.value) || 0;
+                const finalValue = value - (value * fee / 100);
+                finalValuePreview.textContent = `R$ ${finalValue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            
+            adValue.addEventListener('input', updateFinalValue);
+            adFee.addEventListener('input', updateFinalValue);
+        }
+        
+        // Load saved metas
+        function loadMetas() {
+            const saved = localStorage.getItem('trivaci-metas');
+            if (saved) {
+                currentMetas = JSON.parse(saved);
+            }
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            setupFormCalculations();
+            loadMetas();
+        });
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e3659707777b55',t:'MTc2MzA5MDY3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e3984922a77b55',t:'MTc2MzA5Mjc1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
